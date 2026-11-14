@@ -10,9 +10,14 @@ namespace NightShift
         private readonly Text nameText;
         private readonly Text bodyText;
         private readonly Text hintText;
+        private readonly string shiftReminder;
 
-        public DialoguePanel(Transform parent)
+        private string customerHint = "";
+        private bool shiftActive;
+
+        public DialoguePanel(Transform parent, string shiftReminder)
         {
+            this.shiftReminder = shiftReminder;
             // Region y 0..152, x 0..624 with an 8 px margin.
             RectTransform panel = UIBuilder.CreatePanel(parent, "DialogueBox", 8f, 8f, 612f, 140f, UITheme.PanelFill, UITheme.PanelBorder);
             root = panel.gameObject;
@@ -26,7 +31,6 @@ namespace NightShift
             hintText = UIBuilder.CreateText(panel, "ShiftHint", 14f, 8f, 584f, 22f, "", 14, UITheme.Accent, TextAnchor.MiddleLeft);
             hintText.fontStyle = FontStyle.Italic;
             UIBuilder.UseBestFit(hintText, 9, 14);
-            hintText.gameObject.SetActive(false);
         }
 
         public void SetVisible(bool visible)
@@ -39,7 +43,8 @@ namespace NightShift
             nameText.text = customerName;
             bodyText.text = greeting + "\n" + request;
             bodyText.color = UITheme.TextMain;
-            hintText.text = shiftHint;
+            customerHint = shiftHint;
+            RefreshHint();
         }
 
         // The feedback line takes the place of the customer's lines; the name stays.
@@ -49,10 +54,17 @@ namespace NightShift
             bodyText.color = correct ? UITheme.Accent : UITheme.Danger;
         }
 
-        // The hint line is only on screen while the Shift view is active.
-        public void SetHintVisible(bool visible)
+        public void SetShiftView(bool active)
         {
-            hintText.gameObject.SetActive(visible);
+            shiftActive = active;
+            RefreshHint();
+        }
+
+        // Shift held: what the player sees on the other side. Not held: a dim reminder that Shift exists.
+        private void RefreshHint()
+        {
+            hintText.text = shiftActive ? customerHint : shiftReminder;
+            hintText.color = shiftActive ? UITheme.Accent : UITheme.TextDim;
         }
     }
 }

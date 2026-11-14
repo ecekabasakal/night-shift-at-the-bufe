@@ -153,7 +153,9 @@ namespace NightShift.PlayModeTests
             Assert.That(TextOf("Hud/Clock"), Is.EqualTo(GameData.FormatClock(customer.arrivalMinute)), customer.id + ": clock");
             Assert.That(TextOf("DialogueBox/Name"), Is.EqualTo(data.Get(customer.nameKey)), customer.id + ": name");
             Assert.That(TextOf("DialogueBox/Body"), Is.EqualTo(data.Get(customer.greetingKey) + "\n" + data.Get(customer.requestKey)), customer.id + ": lines");
-            Assert.That(IsShown("DialogueBox/ShiftHint"), Is.False, customer.id + ": the Shift hint is hidden while Shift is not held");
+            // Shift is never held in this test: the hint line shows the dim reminder, not what the customer really is.
+            Assert.That(TextOf("DialogueBox/ShiftHint"), Is.EqualTo(data.Get("ui.shiftHint")), customer.id + ": Shift reminder in the hint line");
+            Assert.That(TextOf("DialogueBox/ShiftHint"), Is.Not.EqualTo(data.Get(customer.shiftHintKey)), customer.id + ": the customer's Shift hint must not show without Shift");
             Assert.That(IsShown(SellButton), Is.True, customer.id + ": Sell button");
             Assert.That(IsShown(RefuseButton), Is.True, customer.id + ": Refuse button");
             Assert.That(IsShown(SpecialButton), Is.EqualTo(customer.HasSpecialAction()), customer.id + ": third button");

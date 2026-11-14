@@ -38,7 +38,12 @@ namespace NightShift
         private EndingScreen ending;
 
         private UIScreenId screen = UIScreenId.None;
-        private bool shiftActive;
+
+        // Enter / Space are ignored until this reaches zero, so a held or double key press
+        // cannot skip a feedback line or the ending. Mouse clicks are not affected.
+        private const float FeedbackConfirmDelay = 0.3f;
+        private const float EndingConfirmDelay = 1f;
+        private float confirmDelay;
 
         // Frame of the last intent event, so that one frame can never raise two of them
         // (for example Space as "Start" and then again as "Continue" on the screen that just opened).
@@ -58,7 +63,7 @@ namespace NightShift
             Transform root = CreateCanvas();
 
             // Creation order = drawing order (later = on top).
-            dialogue = new DialoguePanel(root);
+            dialogue = new DialoguePanel(root, data.Get("ui.shiftHint"));
             actions = new ActionPanel(root, data, PressAction, PressContinue);
             hud = new HudPanel(root, data, ToggleNotebook, PressMute);
             notebook = new NotebookPanel(root, data, ToggleNotebook);
@@ -88,7 +93,6 @@ namespace NightShift
                 data.Get(customer.greetingKey),
                 data.Get(customer.requestKey),
                 data.Get(customer.shiftHintKey));
-            dialogue.SetHintVisible(shiftActive);
             actions.ShowChoices(data.Get(customer.specialActionKey));
             SwitchTo(UIScreenId.Customer);
         }
@@ -127,8 +131,7 @@ namespace NightShift
 
         public void SetShiftView(bool active)
         {
-            shiftActive = active;
-            dialogue.SetHintVisible(active);
+            dialogue.SetShiftView(active);
         }
 
         public void SetMuted(bool muted)
@@ -144,6 +147,7 @@ namespace NightShift
             ClearSelection();
 
             hud.Tick(deltaSeconds);
+            if (confirmDelay > 0f) confirmDelay -= deltaSeconds;
 
             if (Input.GetKeyDown(KeyCode.M))
             {
@@ -159,7 +163,8 @@ namespace NightShift
             // While the notebook is open, only Tab and M do something.
             if (notebook.IsOpen) return;
 
-            bool confirm = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space);
+            bool confirm = confirmDelay <= 0f &&
+                (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Space));
 
             // "screen" is read once here, so one key press can only reach one branch.
             switch (screen)
@@ -246,6 +251,9 @@ namespace NightShift
         private void SwitchTo(UIScreenId newScreen)
         {
             screen = newScreen;
+            if (newScreen == UIScreenId.Ending) confirmDelay = EndingConfirmDelay;
+            else if (newScreen == UIScreenId.Feedback) confirmDelay = FeedbackConfirmDelay;
+            else confirmDelay = 0f;
             bool serving = newScreen == UIScreenId.Customer || newScreen == UIScreenId.Feedback;
 
             notebook.Close();

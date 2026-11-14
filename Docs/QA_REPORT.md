@@ -1,6 +1,6 @@
 # QA REPORT — Night Shift at the Büfe
 
-Owner: QA Engineer. Version 2 (Part 2: Unity EditMode results in, PlayMode smoke test written, player's-eye review done).
+Owner: QA Engineer. Version 3 (UI fixes for B1 and B2 applied; PlayMode run 3 pending).
 
 ## 1. Scope
 
@@ -23,7 +23,7 @@ Owner: QA Engineer. Version 2 (Part 2: Unity EditMode results in, PlayMode smoke
 | `ClockTests.cs` | Clock = `arrivalMinute` at every customer, ends at 06:00, `FormatClock` (8 values) | 11 |
 | `CallOrderTests.cs` | Start-up state, calls before `StartNight`, double `Decide`, `Advance` at the wrong time, `Special` without a button, calls after the end, `Reset()` mid-night, `StartNight` after a lost night | 10 |
 | `FullNightPlaythroughTests.cs` | The bot plays whole nights: every ending reachable, each wrong button on each `instantEnd` customer, "always Sell" / "always Refuse" do not win | 11 |
-| `PlayMode/GameSmokeTests.cs` | (1) Start → note → all customers with the correct button → `morning` ending → Play again → title → a second short run. (2) Wrong choices → `fired` → Play again → mistake marks and meter reset. Checks along the way: clock text, name and dialogue lines, feedback line, which buttons are shown, customer and ending pictures, red mistake marks, exactly one Camera / AudioListener / EventSystem / Canvas, no error logs. Saves 5 screenshots to `Logs/screens/` when the run has graphics. | 2 |
+| `PlayMode/GameSmokeTests.cs` | (1) Start → note → all customers with the correct button → `morning` ending → Play again → title → a second short run. (2) Wrong choices → `fired` → Play again → mistake marks and meter reset. Checks along the way: clock text, name and dialogue lines, feedback line, which buttons are shown, the Shift reminder in the hint line, customer and ending pictures, red mistake marks, exactly one Camera / AudioListener / EventSystem / Canvas, no error logs. Tries to save 5 screenshots to `Logs/screens/`; in batchmode none were written. | 2 |
 | `TestSupport.cs`, `NightBot.cs` | Helpers | — |
 
 ## 3. Results
@@ -31,12 +31,14 @@ Owner: QA Engineer. Version 2 (Part 2: Unity EditMode results in, PlayMode smoke
 | Run | Result |
 |---|---|
 | **Unity 6000.6.9f1 batchmode, EditMode** (`Logs/editmode-results.xml`, real UI/Art/Audio code in the project, balance with `noticedFillPerSecondOther` 0.2 and `changedShiftSecondsThreshold` 35) | **120 of 120 passed**, 0 failed, 0 skipped, 0 compile errors. All 7 fixtures passed. |
-| **Unity batchmode, PlayMode** (`GameSmokeTests`) | **PENDING — to be filled from the results XML** |
+| **Unity batchmode, PlayMode** (`GameSmokeTests`), run 1, before the UI fixes | **2 of 2 passed**, no error logs. Screenshots were not written: `Logs/screens/` was created but stayed empty (batchmode limitation). |
+| PlayMode run 2, after the UI fixes for B1 and B2 | 0 of 2: both failed on a test assertion that was out of date ("the Shift hint is hidden while Shift is not held"), not on a game defect. EditMode in the same run: 120 of 120. |
+| PlayMode run 3, with the assertion updated to the new behaviour | **PENDING — to be filled from the results XML** |
 | Compile check with Unity's Roslyn (`-langversion:9.0`): the real runtime sources, then both test assemblies against Unity's `nunit.framework.dll`, `UnityEngine.TestRunner.dll` and `UnityEngine.UI.dll` | 0 errors, 0 warnings |
 | EditMode tests outside Unity (.NET 8, NUnit 3.14, stand-ins for `JsonUtility` and `Resources.Load`), rerun after adding four UI keys to the required list | 120 of 120 passed |
 | Mutation check outside Unity (Part 1, deliberately broken copy of the data) | 14 tests failed, as intended |
 
-The PlayMode test has only been compiled, never run. It finds objects by the names the UI and Art code give them (`TitleScreen/StartButton`, `Hud/Clock`, `KioskView/Shaken/Customer` and so on); if one of those names changes, the test fails with the path in the message.
+The updated PlayMode test has been compiled (0 errors, 0 warnings) but not yet run. It finds objects by the names the UI and Art code give them (`TitleScreen/StartButton`, `Hud/Clock`, `KioskView/Shaken/Customer` and so on); if one of those names changes, the test fails with the path in the message.
 
 ## 4. Playthrough traces (from the Unity EditMode run)
 
@@ -107,11 +109,11 @@ No defect found in the data, `Scripts/Core` or `Scripts/Gameplay`. The player's-
 |---|---|---|---|---|
 | R1 | The `changed` ending had a narrow window (a 4 s look at any other ended the night as `seen`). | Game Designer | Medium | **Fixed**: `noticedFillPerSecondOther` 0.2, `changedShiftSecondsThreshold` 35. An other now takes 5 s to fill the meter; 3 s looks everywhere now add up to 36.3 s, over the threshold (by arithmetic). The Unity run confirms the 2 s bot gets `morning` and the 3.5 s bot gets `changed`. |
 | R2 | GDD said 4–5 s of Shift per customer never fills the meter. | Game Designer | Low | Check that the GDD text matches the new numbers (4 s is now safe on an other, 5 s is not). |
-| B1 | **No reminder of the Shift key during play.** The instruction is on the title screen only; the intro note does not mention it and the HUD shows only "TAB: notebook". A player who clicks through the title fast has to find it in rule 1 of the notebook. Suggestion: show `ui.shiftHint` dimmed in the hint line of the dialogue box while Shift is not held. | UI | Medium | Open |
-| B2 | **A double press of Enter/Space can skip an ending.** The same key is Continue on the feedback line and Play again on the ending screen, with no delay. After the last customer (or the third mistake) a second quick press sends the player back to the title before they read the ending. Suggestion: ignore the confirm key for about a second after the ending appears. | UI | Medium | Open |
-| B3 | Correct and wrong feedback differ by text colour (green / red), the sound and the red mistake mark, but there is no word or symbol. Red/green colour-blind players with sound off rely on the mistake mark alone. | UI | Low | Open |
-| B4 | The M key mutes on the title, note and ending screens too, but the sound label is only in the HUD, so nothing shows that it happened. | UI | Low | Open |
-| R3 | PlayMode smoke test not yet run in Unity. | Orchestrator (run) / QA | Medium until run | Open |
+| B1 | **No reminder of the Shift key during play.** The instruction was on the title screen only. | UI | Medium | **Fixed**: the hint line of the dialogue box is always visible while a customer is at the counter; it shows `ui.shiftHint` dimmed while Shift is not held and the customer's Shift hint in green while held. The smoke test now checks the reminder text. Confirmation: PlayMode run 3. |
+| B2 | **A double press of Enter/Space could skip an ending.** | UI | Medium | **Fixed** in code: Enter/Space is ignored for 1.0 s after the ending appears and 0.3 s after a feedback line appears; button clicks are not delayed. Not covered by a test (keyboard input cannot be simulated). |
+| B3 | Correct and wrong feedback differ by text colour (green / red), the sound and the red mistake mark, but there is no word or symbol. | UI | Low | Parked in `Docs/IDEAS_LATER.md` |
+| B4 | The M key mutes on the title, note and ending screens too, but the sound label is only in the HUD. | UI | Low | Parked in `Docs/IDEAS_LATER.md` |
+| R3 | PlayMode smoke test: run 3 pending after the assertion update. | Orchestrator (run) / QA | Medium until run | Open |
 | R4 | Shift vision in the running game is not covered by any automated test (see Scope). It needs a human to hold Shift once on a human, an other and the starer. | Orchestrator / owner | Medium | Open |
 | R5 | WebGL keyboard behaviour is unverified: Tab may move focus out of the canvas, Space may scroll the host page, and a Shift key held while the tab loses focus may stay "held". The notebook also has a clickable button, which covers the Tab case. | Build | Low to medium | Needs a browser check |
 | R6 | `IGameSession.Decide` returns the previous decision when called at the wrong time; `GameBootstrap` checks `CanDecide` first, so it is harmless today. | Tech Lead / Gameplay | Info | — |
@@ -124,16 +126,16 @@ From reading the code and measuring the real longest strings against the box siz
 |---|---|---|---|
 | 1 | Is it clear what to do in the first 30 seconds? | Pass | Title: name, tagline, a boxed green "Hold SHIFT…" line, Start button with `[ENTER]`, a controls line. Then Hasan's note, then the first customer with buttons labelled `[1] Sell`, `[2] Refuse`. |
 | 2 | Is the Shift instruction visible on the title screen? | Pass | Own bordered box in the accent colour, 20 px. The smoke test checks its text. |
-| 3 | Is there a Shift reminder during play? | **Fail** | See B1. Only inside the notebook rules. |
+| 3 | Is there a Shift reminder during play? | Pass (was Fail) | Fixed, see B1: a dim reminder sits in the hint line whenever Shift is not held. |
 | 4 | Is the notebook discoverable? | Pass | A "TAB: notebook" button is always in the HUD, the controls line and the note mention it. Tab in a browser: see R5. |
 | 5 | Can any real string overflow its box? | Pass, needs eyes | Every long text uses best-fit with truncation as the last resort. Longest real strings: greeting + request 125 characters in a 584 × 76 box (about 3 lines of 16 px); feedback 85; Shift hint 79 on one 584 px line; rule 105 in a 772 × 35 slot (2 lines); ending body 271 in 720 × 108; note 422 in 584 × 276. All fit at full size by estimate. Fixed-size texts (name, tagline, HUD labels, clock) are short. A Turkish translation would need this re-checked, mainly the HUD labels (80 and 128 px wide, no best-fit). |
 | 6 | Does the Shift view visibly change the screen? | Pass, needs eyes | Other-side background palette, purple tint, darker vignette, shake that grows with the meter, faster light flicker. |
 | 7 | Does the Shift view visibly change the customer? | Pass, needs eyes | The figure is recoloured and a shadow appears on the counter (shadows exist only in the Shift view, as rule 1 says). All ten anomalies are handled by the painters. Whether "no shadow" and "no whistle" read clearly at this pixel size needs a look. |
-| 8 | Is the Shift hint line shown only while Shift is held? | Pass | `DialoguePanel.SetHintVisible` follows the Shift state; the smoke test checks it is hidden without Shift. |
+| 8 | Is the customer's Shift hint shown only while Shift is held? | Pass | `DialoguePanel.RefreshHint` shows the customer's hint only while Shift is active, otherwise the reminder; the smoke test checks the line without Shift. |
 | 9 | Are correct and wrong decisions clearly distinguishable? | Pass, with B3 | Green or red feedback line, cash register / refuse / error sound, red mistake mark. |
 | 10 | Does every ending show its own title and body? | Pass | Four title/body pairs, title colour per ending, own picture and stinger. Smoke test checks `morning` and `fired`; the data test checks all eight keys. |
 | 11 | Does Play again fully reset UI, kiosk view and audio? | Pass | Session reset and republished (clock, meter, mistakes, Shift off); UI back to title with notebook closed; kiosk hides customer and ending picture; audio stops drone, heartbeat and stinger, keeps hum and mute. Smoke test checks the UI and kiosk part. |
 | 12 | Does anything play sound before the Start click? | Pass | Every play call is behind the `started` flag, set in `BeginAfterUserGesture`. |
 | 13 | Per-frame allocations or texture leaks? | Pass | Sprites and textures are cached in `SpriteFactory` by look, so a restart creates nothing new; customer sprites are painted once on first arrival. Audio clips are built once in `Init`. No allocations found in the `Tick` paths. |
 | 14 | Anything that would break in WebGL? | Pass, needs eyes | No threads, `System.IO`, `Shader.Find`, `PlayerPrefs` or streaming audio in the runtime code; clips use `AudioClip.Create` + `SetData`, the font is the built-in one. Keyboard behaviour in the browser: see R5. |
-| 15 | Can the ending be skipped by accident? | **Fail** | See B2. |
+| 15 | Can the ending be skipped by accident? | Pass (was Fail), needs eyes | Fixed, see B2: a 1.0 s keyboard delay on the ending screen. |
