@@ -22,7 +22,8 @@ namespace NightShift.Tests
         private static readonly string[] RequiredKeys =
         {
             "ui.title", "ui.tagline", "ui.shiftHint", "ui.start", "ui.sell", "ui.refuse", "ui.notebookTitle", "ui.notebookHint",
-            "ui.noticed", "ui.mistakes", "ui.playAgain", "ui.continue", "ui.controls", "intro.note"
+            "ui.noticed", "ui.mistakes", "ui.playAgain", "ui.continue", "ui.controls", "intro.note",
+            "ui.keyEnter", "ui.notebookClose", "ui.soundOn", "ui.soundOff" // used by the UI code
         };
         private static readonly Regex HexColor = new Regex("^#[0-9A-Fa-f]{6}$");
         private const int AyranCutoffMinute = 240; // 03:00
