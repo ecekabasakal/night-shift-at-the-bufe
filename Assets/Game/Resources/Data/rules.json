@@ -1,0 +1,39 @@
+{
+  "rules": [
+    {
+      "id": "r1_shadow",
+      "textKey": "rule.r1_shadow",
+      "needsShift": true
+    },
+    {
+      "id": "r2_ayran",
+      "textKey": "rule.r2_ayran",
+      "needsShift": false
+    },
+    {
+      "id": "r3_bekci",
+      "textKey": "rule.r3_bekci",
+      "needsShift": true
+    },
+    {
+      "id": "r4_repeat",
+      "textKey": "rule.r4_repeat",
+      "needsShift": false
+    },
+    {
+      "id": "r5_cat",
+      "textKey": "rule.r5_cat",
+      "needsShift": false
+    },
+    {
+      "id": "r6_stare",
+      "textKey": "rule.r6_stare",
+      "needsShift": true
+    },
+    {
+      "id": "r7_keys",
+      "textKey": "rule.r7_keys",
+      "needsShift": false
+    }
+  ]
+}

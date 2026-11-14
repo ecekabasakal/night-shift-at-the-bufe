@@ -1,0 +1,6 @@
+{
+  "name": "NightShift",
+  "rootNamespace": "NightShift",
+  "references": ["UnityEngine.UI"],
+  "autoReferenced": true
+}

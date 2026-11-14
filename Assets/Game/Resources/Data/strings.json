@@ -1,0 +1,476 @@
+{
+  "entries": [
+    {
+      "key": "ui.title",
+      "value": "Night Shift at the Büfe"
+    },
+    {
+      "key": "ui.tagline",
+      "value": "Seven hours. Seven rules. Don't look for long."
+    },
+    {
+      "key": "ui.shiftHint",
+      "value": "Hold SHIFT to see what's really there"
+    },
+    {
+      "key": "ui.start",
+      "value": "Start shift"
+    },
+    {
+      "key": "ui.sell",
+      "value": "Sell"
+    },
+    {
+      "key": "ui.refuse",
+      "value": "Refuse"
+    },
+    {
+      "key": "ui.special.catfood",
+      "value": "Give cat food"
+    },
+    {
+      "key": "ui.special.keys",
+      "value": "Hand over the keys"
+    },
+    {
+      "key": "ui.notebookTitle",
+      "value": "Hasan's notebook"
+    },
+    {
+      "key": "ui.notebookHint",
+      "value": "TAB: notebook"
+    },
+    {
+      "key": "ui.noticed",
+      "value": "Noticed"
+    },
+    {
+      "key": "ui.mistakes",
+      "value": "Mistakes"
+    },
+    {
+      "key": "ui.playAgain",
+      "value": "Work another night"
+    },
+    {
+      "key": "ui.continue",
+      "value": "Continue"
+    },
+    {
+      "key": "ui.controls",
+      "value": "SHIFT: look   TAB: notebook   1: sell   2: refuse   3: other"
+    },
+    {
+      "key": "intro.note",
+      "value": "To whoever takes the night shift at the büfe (this kiosk): I left in a hurry. People will want tost (pressed toastie), ayran (salty yogurt drink), simit (sesame bread ring), çekirdek (sunflower seeds). They will call you abi or abla, big brother or big sister. Be polite. The bekçi (night watchman) walks this street. Some of the customers are not customers. My rules are in the notebook. They are not suggestions. - Hasan"
+    },
+    {
+      "key": "rule.r1_shadow",
+      "value": "No shadow, no sale. Shadows only show on the other side, so hold Shift and look at the floor."
+    },
+    {
+      "key": "rule.r2_ayran",
+      "value": "After 03:00 the ayran is not ours. Whoever asks, say we are out. Do not open the fridge to check."
+    },
+    {
+      "key": "rule.r3_bekci",
+      "value": "If someone says he is the bekçi, look with Shift. A real bekçi keeps his whistle. No whistle: refuse."
+    },
+    {
+      "key": "rule.r4_repeat",
+      "value": "Same face twice in one night must want the same thing as before. Different order: refuse."
+    },
+    {
+      "key": "rule.r5_cat",
+      "value": "Cats stay outside. If a 'cat' comes in anyway, give it cat food. Nothing else, whatever it points at."
+    },
+    {
+      "key": "rule.r6_stare",
+      "value": "If something looks back at you from the other side, let go of Shift at once. Then sell. Do not refuse it."
+    },
+    {
+      "key": "rule.r7_keys",
+      "value": "Never hand over the keys. Not to the bekçi, not to the owner, not to me if I come back."
+    },
+    {
+      "key": "item.tost",
+      "value": "Tost"
+    },
+    {
+      "key": "item.ayran",
+      "value": "Ayran"
+    },
+    {
+      "key": "item.simit",
+      "value": "Simit"
+    },
+    {
+      "key": "item.cigarettes",
+      "value": "Cigarettes"
+    },
+    {
+      "key": "item.water",
+      "value": "Water"
+    },
+    {
+      "key": "item.matches",
+      "value": "Matches"
+    },
+    {
+      "key": "item.cekirdek",
+      "value": "Çekirdek"
+    },
+    {
+      "key": "item.catfood",
+      "value": "Cat food"
+    },
+    {
+      "key": "item.none",
+      "value": "Nothing"
+    },
+    {
+      "key": "cust.c01_student.name",
+      "value": "Student"
+    },
+    {
+      "key": "cust.c01_student.greeting",
+      "value": "Evening. You're new? Hasan abi always squinted at me before he'd sell me anything."
+    },
+    {
+      "key": "cust.c01_student.request",
+      "value": "One tost, please. Exams. I live on these."
+    },
+    {
+      "key": "cust.c01_student.shiftHint",
+      "value": "Just a tired student. Shadow where it should be."
+    },
+    {
+      "key": "cust.c01_student.correct",
+      "value": "He eats it at the counter and leaves crumbs. Ordinary crumbs."
+    },
+    {
+      "key": "cust.c01_student.wrong",
+      "value": "He was only hungry. He leaves confused, and the owner will hear about it."
+    },
+    {
+      "key": "cust.c02_taxi.name",
+      "value": "Taxi Driver"
+    },
+    {
+      "key": "cust.c02_taxi.greeting",
+      "value": "Evening, boss. Slow night out there. Nobody is going anywhere."
+    },
+    {
+      "key": "cust.c02_taxi.request",
+      "value": "One ayran. Cold, from the back of the fridge."
+    },
+    {
+      "key": "cust.c02_taxi.shiftHint",
+      "value": "A taxi driver with a sore back. His shadow slouches too."
+    },
+    {
+      "key": "cust.c02_taxi.correct",
+      "value": "He drinks it in one go. It is not three yet. The fridge behaves."
+    },
+    {
+      "key": "cust.c02_taxi.wrong",
+      "value": "It is not three yet. The ayran was fine. He drives off thirsty and annoyed."
+    },
+    {
+      "key": "cust.c03_auntie.name",
+      "value": "Auntie"
+    },
+    {
+      "key": "cust.c03_auntie.greeting",
+      "value": "Can't sleep, dear. The cats are loud tonight. Don't let them in."
+    },
+    {
+      "key": "cust.c03_auntie.request",
+      "value": "A bag of çekirdek. The salted ones."
+    },
+    {
+      "key": "cust.c03_auntie.shiftHint",
+      "value": "An old neighbour in her slippers. Small shadow, right where it belongs."
+    },
+    {
+      "key": "cust.c03_auntie.correct",
+      "value": "She cracks the first seed before she is out the door."
+    },
+    {
+      "key": "cust.c03_auntie.wrong",
+      "value": "She has shopped here for thirty years. She will mention this to everyone."
+    },
+    {
+      "key": "cust.c04_bekci.name",
+      "value": "Bekçi"
+    },
+    {
+      "key": "cust.c04_bekci.greeting",
+      "value": "Night watch. I'm the bekçi on this street. All quiet?"
+    },
+    {
+      "key": "cust.c04_bekci.request",
+      "value": "Pack of cigarettes. The usual blue ones."
+    },
+    {
+      "key": "cust.c04_bekci.shiftHint",
+      "value": "The whistle is still on his chest, catching the light. Shadow in order."
+    },
+    {
+      "key": "cust.c04_bekci.correct",
+      "value": "He nods, pays, and blows the whistle once at the corner."
+    },
+    {
+      "key": "cust.c04_bekci.wrong",
+      "value": "That was the real bekçi. He only wanted cigarettes. Now he is writing something down."
+    },
+    {
+      "key": "cust.c05_courier.name",
+      "value": "Courier"
+    },
+    {
+      "key": "cust.c05_courier.greeting",
+      "value": "Hey. Long route tonight. Bike's just outside."
+    },
+    {
+      "key": "cust.c05_courier.request",
+      "value": "A bottle of water. Small is fine."
+    },
+    {
+      "key": "cust.c05_courier.shiftHint",
+      "value": "The fluorescent light passes straight through. Nothing on the floor behind him."
+    },
+    {
+      "key": "cust.c05_courier.correct",
+      "value": "'Out of water,' you say, next to the water. He nods slowly and leaves."
+    },
+    {
+      "key": "cust.c05_courier.wrong",
+      "value": "He drinks. The water doesn't go anywhere. The floor under him stays bright."
+    },
+    {
+      "key": "cust.c06_student_again.name",
+      "value": "Student"
+    },
+    {
+      "key": "cust.c06_student_again.greeting",
+      "value": "Me again. Chapter nine did not go well."
+    },
+    {
+      "key": "cust.c06_student_again.request",
+      "value": "Another tost, please. Same as before."
+    },
+    {
+      "key": "cust.c06_student_again.shiftHint",
+      "value": "Same student, more tired. Same shadow, now slumped."
+    },
+    {
+      "key": "cust.c06_student_again.correct",
+      "value": "Same order, same crumbs. He salutes you with the tost."
+    },
+    {
+      "key": "cust.c06_student_again.wrong",
+      "value": "Same face, same order. He was just the student. You owe him an apology."
+    },
+    {
+      "key": "cust.c07_cat.name",
+      "value": "Cat"
+    },
+    {
+      "key": "cust.c07_cat.greeting",
+      "value": "(It walks in like it pays the rent.) Mrrp."
+    },
+    {
+      "key": "cust.c07_cat.request",
+      "value": "(It puts one paw on the cigarettes and looks at you.)"
+    },
+    {
+      "key": "cust.c07_cat.shiftHint",
+      "value": "On the other side it stands taller than the fridge. Still mostly cat-shaped."
+    },
+    {
+      "key": "cust.c07_cat.correct",
+      "value": "It eats the cat food off the counter, politely, and leaves on four legs."
+    },
+    {
+      "key": "cust.c07_cat.wrong",
+      "value": "It looks at you for a long time, then leaves. The cats outside go quiet."
+    },
+    {
+      "key": "cust.c08_auntie_again.name",
+      "value": "Auntie"
+    },
+    {
+      "key": "cust.c08_auntie_again.greeting",
+      "value": "Can't sleep, dear. The cats have gone so quiet."
+    },
+    {
+      "key": "cust.c08_auntie_again.request",
+      "value": "Matches. One box of matches. I never liked seeds."
+    },
+    {
+      "key": "cust.c08_auntie_again.shiftHint",
+      "value": "Her shadow points toward the lamp. Her eyes are aimed at the fridge."
+    },
+    {
+      "key": "cust.c08_auntie_again.correct",
+      "value": "'Not tonight, auntie.' She keeps smiling a little too long, then goes."
+    },
+    {
+      "key": "cust.c08_auntie_again.wrong",
+      "value": "She doesn't count her change. She has always counted her change."
+    },
+    {
+      "key": "cust.c09_nightowl.name",
+      "value": "Night Owl"
+    },
+    {
+      "key": "cust.c09_nightowl.greeting",
+      "value": "Heyyy. You're open. Best büfe in all of İzmir."
+    },
+    {
+      "key": "cust.c09_nightowl.request",
+      "value": "Ayran. I need an ayran or I will actually die."
+    },
+    {
+      "key": "cust.c09_nightowl.shiftHint",
+      "value": "Just drunk. Her shadow sways exactly when she does."
+    },
+    {
+      "key": "cust.c09_nightowl.correct",
+      "value": "'We're out.' She mourns briefly and leaves. Behind you, the fridge hums."
+    },
+    {
+      "key": "cust.c09_nightowl.wrong",
+      "value": "You open the fridge. Something at the back pulls the ayran in and shuts the door."
+    },
+    {
+      "key": "cust.c10_bekci_fake.name",
+      "value": "Bekçi"
+    },
+    {
+      "key": "cust.c10_bekci_fake.greeting",
+      "value": "Night watch. I'm the bekçi on this street. All quiet?"
+    },
+    {
+      "key": "cust.c10_bekci_fake.request",
+      "value": "Pack of cigarettes. The usual blue ones."
+    },
+    {
+      "key": "cust.c10_bekci_fake.shiftHint",
+      "value": "The uniform is right. The chest is bare where the whistle hung."
+    },
+    {
+      "key": "cust.c10_bekci_fake.correct",
+      "value": "'Not tonight.' He stands there a while, practising a frown, then goes."
+    },
+    {
+      "key": "cust.c10_bekci_fake.wrong",
+      "value": "He takes what you give him. At the corner he purses his lips. No sound comes out."
+    },
+    {
+      "key": "cust.c11_tall.name",
+      "value": "Tall Customer"
+    },
+    {
+      "key": "cust.c11_tall.greeting",
+      "value": "Good evening. Is it still evening?"
+    },
+    {
+      "key": "cust.c11_tall.request",
+      "value": "Matches. One box. I will count them myself."
+    },
+    {
+      "key": "cust.c11_tall.shiftHint",
+      "value": "It has a shadow. It also has eyes, bright, already on you."
+    },
+    {
+      "key": "cust.c11_tall.correct",
+      "value": "It counts the matches, all forty, and leaves exactly the right money."
+    },
+    {
+      "key": "cust.c11_tall.wrong",
+      "value": "'No,' you say. It leans in to hear you better. It is still looking."
+    },
+    {
+      "key": "cust.c12_fisherman.name",
+      "value": "Fisherman"
+    },
+    {
+      "key": "cust.c12_fisherman.greeting",
+      "value": "Morning, nearly. The boat leaves at six."
+    },
+    {
+      "key": "cust.c12_fisherman.request",
+      "value": "Two... no, one simit. And don't tell my wife."
+    },
+    {
+      "key": "cust.c12_fisherman.shiftHint",
+      "value": "A fisherman who smells of diesel. Long shadow, because the lamp is low."
+    },
+    {
+      "key": "cust.c12_fisherman.correct",
+      "value": "He tears the simit in half and feeds the first piece to a cat. A real one."
+    },
+    {
+      "key": "cust.c12_fisherman.wrong",
+      "value": "He was just a man going to work. Now he goes to work hungry."
+    },
+    {
+      "key": "cust.c13_hasan.name",
+      "value": "Hasan abi"
+    },
+    {
+      "key": "cust.c13_hasan.greeting",
+      "value": "It's me. Hasan. I wrote that note. You did well tonight."
+    },
+    {
+      "key": "cust.c13_hasan.request",
+      "value": "I don't need anything. Just hand me the keys, I'll take it from here."
+    },
+    {
+      "key": "cust.c13_hasan.shiftHint",
+      "value": "A man-shaped dark, standing up inside his clothes. It knows the handwriting."
+    },
+    {
+      "key": "cust.c13_hasan.correct",
+      "value": "'No.' He nods, almost proud. 'Good. I wrote that one for a reason.' Then he is gone."
+    },
+    {
+      "key": "cust.c13_hasan.wrong",
+      "value": "You say yes. He is behind the counter before you finish. You are on the street side."
+    },
+    {
+      "key": "ending.morning.title",
+      "value": "Morning"
+    },
+    {
+      "key": "ending.morning.body",
+      "value": "06:00. The street lamp clicks off and the first bus goes by. The owner counts the till, counts it again, and grunts, which is praise. You tape the note back where you found it and add one line for whoever comes next: 'Don't look for long.' Outside, a cat is just a cat."
+    },
+    {
+      "key": "ending.changed.title",
+      "value": "The shift changed you"
+    },
+    {
+      "key": "ending.changed.body",
+      "value": "06:00. You made it. The owner counts the till and does not look up. Walking home, the lamps are still on, and the pavement behind you is bright all the way down. You looked too long, too often. Tomorrow night you will be on the other side of the glass, wanting something."
+    },
+    {
+      "key": "ending.seen.title",
+      "value": "It saw you"
+    },
+    {
+      "key": "ending.seen.body",
+      "value": "You held on too long. Something on the other side stopped being a customer and looked straight back, and now it knows there is someone behind the counter. The fluorescent light hums. The door does not open again, because nothing needs to come in. It is already here."
+    },
+    {
+      "key": "ending.fired.title",
+      "value": "You're fired"
+    },
+    {
+      "key": "ending.fired.body",
+      "value": "At six the owner finds the shop not the way he left it. 'The note was right there,' he says, and holds out his hand for the apron. There will be another note taped to the till by tonight. Outside, the cats do not look at you."
+    }
+  ]
+}
