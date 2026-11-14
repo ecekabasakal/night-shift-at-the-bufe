@@ -13,8 +13,8 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 | 3. Gameplay Programmer | `Assets/Game/Scripts/Gameplay/` | Bitti | GameSession + NoticedMeter; 6 senaryo Unity dışında geçti |
 | 4. UI Programmer | `Assets/Game/Scripts/UI/` | Bitti | 10 dosya, csc 0 hata; yerleşim Unity'de henüz görülmedi |
 | 5. Art Programmer | `Assets/Game/Scripts/Art/` | Devam ediyor | Aşama 2 |
-| 6. Audio Programmer | `Assets/Game/Scripts/Audio/` | Devam ediyor | Aşama 2 |
-| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Testler erken başlatıldı (Core+Gameplay hazır) |
+| 6. Audio Programmer | `Assets/Game/Scripts/Audio/` | Bitti | 12 ses, dalga formu kontrolleri temiz; kulakla dinlenmedi |
+| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Bölüm 1 bitti: 120 test, Unity dışında 120/120; Unity koşusu bekliyor |
 | 8. Build & Release | `Assets/Game/Editor/`, `.gitignore`, `README.md`, `Builds/` | Bitti (Aşama 2) | ProjectBuilder csc 0 hata; Unity'de henüz çalışmadı |
 
 ## Aşamalar
@@ -46,8 +46,10 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 9. Tech Lead varsayımları onaylandı: geceyi bitiren yanlış kararda önce geri bildirim, Continue ile son; `instantEnd` hata eklemez; gösterge geri bildirim sırasında da işler; Play again başlık ekranına döner; düdük sesi `accessory == "whistle"` ile tetiklenir; M tuşu sesi kapatır.
 10. Git commit'lerini ve GitHub push'unu Orchestrator yapar (paralel ajanlar git'e dokunmaz).
 
+11. **Denge (QA bulgusu):** `changed` sonu neredeyse ulaşılamazdı (ötekine 4 sn bakmak göstergeyi dolduruyor, 40 sn toplam için müşteri başına >3,1 sn gerek). Karar: `noticedFillPerSecondOther` 0.25 → 0.2, `changedShiftSecondsThreshold` 40 → 35. Designer uyguluyor.
+
 ## Açık işler
 
-- [ ] **UI + Designer:** UI'de `strings.json` dışında kalan sabit İngilizce metinler var (`[1] [2] [3]`, `[ENTER]`, `TAB: close`, `M: sound on/off`). Çeviri için `ui.*` anahtarlarına taşınacak; `ui.controls` metnine M ve Enter eklenecek.
+- [ ] **UI + Designer (devam ediyor):** UI'de `strings.json` dışında kalan sabit İngilizce metinler var (`[1] [2] [3]`, `[ENTER]`, `TAB: close`, `M: sound on/off`). Çeviri için `ui.*` anahtarlarına taşınacak; `ui.controls` metnine M ve Enter eklenecek.
 - [ ] **Orchestrator:** WebGL build'de Tab tuşunun tarayıcı odağını canvas'tan kaçırıp kaçırmadığını kontrol et (HUD'daki defter butonu yedek).
 - Not: 14 Kasım'da beş ajan kullanım limitine takıldı, limit sıfırlanınca kaldıkları yerden devam ettirildi.
