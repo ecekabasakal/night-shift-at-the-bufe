@@ -12,7 +12,6 @@ You work the night shift, 23:00 to 06:00, at a neighbourhood büfe in İzmir. Pe
 
 ## Screenshot
 
-<!-- TODO: add Docs/screenshot.png (960 x 540) -->
 ![Screenshot](Docs/screenshot.png)
 
 ## Play

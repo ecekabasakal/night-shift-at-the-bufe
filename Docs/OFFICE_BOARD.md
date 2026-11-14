@@ -7,14 +7,14 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 
 | Ajan | Klasör | Durum | Not |
 |---|---|---|---|
-| Orchestrator | `Docs/OFFICE_BOARD.md`, entegrasyon | Devam ediyor | Aşama 0 bitti |
+| Orchestrator | `Docs/OFFICE_BOARD.md`, entegrasyon | Devam ediyor | Aşama 5: build + tarayıcı kontrolü yapıldı, push kaldı |
 | 1. Game Designer | `Docs/GDD.md`, `Assets/Game/Resources/Data/` | Bitti | 13 müşteri, 7 kural, 118 metin; öz-kontrol temiz |
 | 2. Tech Lead | `Assets/Game/Scripts/Core/`, `Docs/ARCHITECTURE.md` | Bitti | Core, csc ile stub'lara karşı 0 hata |
 | 3. Gameplay Programmer | `Assets/Game/Scripts/Gameplay/` | Bitti | GameSession + NoticedMeter; 6 senaryo Unity dışında geçti |
 | 4. UI Programmer | `Assets/Game/Scripts/UI/` | Bitti | 10 dosya, csc 0 hata; yerleşim Unity'de henüz görülmedi |
 | 5. Art Programmer | `Assets/Game/Scripts/Art/` | Bitti | 9 dosya; önizlemeler Orchestrator tarafından görüldü, tüm anomaliler okunuyor |
 | 6. Audio Programmer | `Assets/Game/Scripts/Audio/` | Bitti | 12 ses, dalga formu kontrolleri temiz; kulakla dinlenmedi |
-| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Bölüm 2: PlayMode duman testi + oyuncu gözüyle inceleme |
+| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Bitti | EditMode 120/120, PlayMode 2/2 (Unity); oyuncu gözüyle inceleme raporda |
 | 8. Build & Release | `Assets/Game/Editor/`, `.gitignore`, `README.md`, `Builds/` | Bitti (Aşama 2) | ProjectBuilder csc 0 hata; Unity'de henüz çalışmadı |
 
 ## Aşamalar
@@ -23,8 +23,8 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 - [x] Aşama 1 — Tasarım ve mimari
 - [x] Aşama 2 — Üretim
 - [x] Aşama 3 — Entegrasyon (0 derleme hatası; EditMode 120/120 Unity'de)
-- [ ] Aşama 4 — QA (tüm testler geçiyor)
-- [ ] Aşama 5 — Build ve teslim
+- [x] Aşama 4 — QA (EditMode 120/120, PlayMode 2/2)
+- [x] Aşama 5 — Build ve teslim (WebGL build 31 MB, zip 9,7 MB, tarayıcıda oynatıldı)
 
 ## Ortam (Aşama 0)
 
@@ -48,11 +48,16 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 
 11. **Denge (QA bulgusu):** `changed` sonu neredeyse ulaşılamazdı (ötekine 4 sn bakmak göstergeyi dolduruyor, 40 sn toplam için müşteri başına >3,1 sn gerek). Karar: `noticedFillPerSecondOther` 0.25 → 0.2, `changedShiftSecondsThreshold` 40 → 35. Designer uyguluyor.
 
+12. QA incelemesi: Shift hatırlatması ve Enter çift basma koruması UI'ye eklendi; düşük öncelikli bulgular `IDEAS_LATER.md`'ye taşındı.
+13. Tarayıcı kontrolü: Playwright yerine `playwright-core` + kurulu Chrome (başsız) ile build oynatıldı; ekran görüntüleri `Docs/screenshot.png` ve `Docs/screenshot-shift.png`. Orchestrator README'deki ekran görüntüsü TODO satırını sildi (tek satır).
+
 ## Açık işler
 
 - [x] **UI + Designer:** UI'de `strings.json` dışında kalan sabit İngilizce metinler var (`[1] [2] [3]`, `[ENTER]`, `TAB: close`, `M: sound on/off`). Çeviri için `ui.*` anahtarlarına taşınacak; `ui.controls` metnine M ve Enter eklenecek.
-- [ ] **Orchestrator:** WebGL build'de Tab tuşunun tarayıcı odağını canvas'tan kaçırıp kaçırmadığını kontrol et (HUD'daki defter butonu yedek).
+- [x] **Orchestrator:** WebGL build'de Tab tuşunun tarayıcı odağını canvas'tan kaçırıp kaçırmadığını kontrol et (HUD'daki defter butonu yedek).
 - Not: 14 Kasım'da beş ajan kullanım limitine takıldı, limit sıfırlanınca kaldıkları yerden devam ettirildi.
 
-- [ ] **Orchestrator:** WebGL build'de runtime `SpriteRenderer`'ların çizildiğini doğrula (Sprites/Default shader'ı build'den atılmamalı).
-- [ ] **Art (düşük öncelik, `IDEAS_LATER`):** `changed` sonundaki yansıma, dışarıda duran biri gibi okunuyor; sokak kedisi normal görünümde soluk.
+- [x] **Orchestrator:** WebGL build'de runtime `SpriteRenderer`'ların çizildiğini doğrula (Sprites/Default shader'ı build'den atılmamalı).
+- [x] **Art (ertelendi → `IDEAS_LATER.md`):** `changed` sonundaki yansıma, dışarıda duran biri gibi okunuyor; sokak kedisi normal görünümde soluk.
+- [ ] **Kullanıcı:** Sesleri gerçek tarayıcıda dinle (başsız testte duyulamadı); `changed` sonunu elle dene; Firefox/Safari ve itch.io iframe'inde Tab/Space davranışına bak.
+- [ ] **Kullanıcı:** README'de itch.io linki, krediler ve lisans TODO.
