@@ -28,7 +28,7 @@ namespace NightShift
             UIBuilder.UseBestFit(bodyText, 11, 17);
 
             UIBuilder.CreateButton(t, "PlayAgainButton", 320f, 16f, 320f, 44f,
-                data.Get("ui.playAgain") + UITheme.ConfirmKeyHint, 18, onPlayAgain);
+                data.Get("ui.playAgain") + "  " + data.Get("ui.keyEnter"), 18, onPlayAgain);
         }
 
         public void SetVisible(bool visible)

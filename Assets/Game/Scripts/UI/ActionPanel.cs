@@ -34,7 +34,7 @@ namespace NightShift
             specialLabel = special.GetComponentInChildren<Text>();
 
             continueButton = UIBuilder.CreateButton(area, "ContinueButton", 0f, 49f, 324f, 42f,
-                data.Get("ui.continue") + UITheme.ConfirmKeyHint, 18, onContinue).gameObject;
+                data.Get("ui.continue") + "  " + data.Get("ui.keyEnter"), 18, onContinue).gameObject;
         }
 
         public void SetVisible(bool visible)

@@ -30,7 +30,7 @@ namespace NightShift
             UIBuilder.UseBestFit(hint, 12, 20);
 
             UIBuilder.CreateButton(t, "StartButton", 340f, 150f, 280f, 52f,
-                data.Get("ui.start") + UITheme.ConfirmKeyHint, 20, onStart);
+                data.Get("ui.start") + "  " + data.Get("ui.keyEnter"), 20, onStart);
 
             Text controls = UIBuilder.CreateText(t, "Controls", 30f, 60f, 900f, 24f, data.Get("ui.controls"), 15,
                 UITheme.TextDim, TextAnchor.MiddleCenter);

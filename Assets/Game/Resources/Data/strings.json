@@ -58,7 +58,23 @@
     },
     {
       "key": "ui.controls",
-      "value": "SHIFT: look   TAB: notebook   1: sell   2: refuse   3: other"
+      "value": "SHIFT: look  TAB: notebook  1/2/3: sell/refuse/other  ENTER/SPACE: continue  M: mute"
+    },
+    {
+      "key": "ui.keyEnter",
+      "value": "[ENTER]"
+    },
+    {
+      "key": "ui.notebookClose",
+      "value": "TAB: close"
+    },
+    {
+      "key": "ui.soundOn",
+      "value": "M: sound on"
+    },
+    {
+      "key": "ui.soundOff",
+      "value": "M: sound off"
     },
     {
       "key": "intro.note",

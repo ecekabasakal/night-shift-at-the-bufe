@@ -23,7 +23,7 @@ namespace NightShift
             Text title = UIBuilder.CreateText(paper, "Title", 20f, 286f, 600f, 28f, data.Get("ui.notebookTitle"), 22,
                 UITheme.Ink, TextAnchor.MiddleLeft);
             title.fontStyle = FontStyle.Bold;
-            UIBuilder.CreateButton(paper, "CloseButton", 708f, 286f, 112f, 26f, UITheme.NotebookCloseHint, 13, onClose);
+            UIBuilder.CreateButton(paper, "CloseButton", 708f, 286f, 112f, 26f, data.Get("ui.notebookClose"), 13, onClose);
             UIBuilder.CreateImage(paper, "TitleLine", 20f, 280f, 800f, UITheme.BorderSize, UITheme.PaperBorder).raycastTarget = false;
 
             // The rules share the space under the title equally.

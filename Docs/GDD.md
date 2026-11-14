@@ -23,18 +23,18 @@ Holding Shift tints the screen, applies each customer's `shiftAnomalies`, and sh
 | balance.json | Value | Meaning |
 |---|---|---|
 | `noticedFillPerSecond` | 0.10 | Ordinary human or empty counter: 10 s from empty to full |
-| `noticedFillPerSecondOther` | 0.25 | `isOther`: 4 s |
+| `noticedFillPerSecondOther` | 0.20 | `isOther`: 5 s |
 | `noticedFillPerSecondStare` | 0.67 | `staresBack`: 1.5 s |
 | `noticedDrainPerSecond` | 0.075 | Full to empty in 13.3 s |
 | `maxMistakes` | 3 | Third mistake = `fired` |
-| `changedShiftSecondsThreshold` | 40.0 | Total Shift seconds above this = `changed` |
+| `changedShiftSecondsThreshold` | 35.0 | Total Shift seconds above this = `changed` |
 | `shiftLengthMinutes` | 420 | 23:00 to 06:00 |
 
 Why these numbers:
 
-- A careful look is 1–2 s. On a human that costs 0.10–0.20, on an other 0.25–0.50. Reading the dialogue and deciding takes 15 s or more with Shift released, which drains about 1.1, so a careful player starts every customer near zero. The meter punishes lingering, not looking.
+- A careful look is 1–2 s. On a human that costs 0.10–0.20, on an other 0.20–0.40. Reading the dialogue and deciding takes 15 s or more with Shift released, which drains about 1.1, so a careful player starts every customer near zero. The meter punishes lingering, not looking.
 - The starer fills from empty in 1.5 s. A half-second glance costs 0.33 and is survivable; a normal 2 s read is not. That is rule 6 expressed in numbers. Arriving with a part-filled meter makes it tighter, which rewards discipline on the customer before.
-- The careful total is about 2 s x 13 = 26 s. A player who holds Shift about 4–5 s per customer reaches 52–65 s without ever filling the meter (4 s on a human is +0.4 and drains away during the dialogue). 40 s sits between the two, so `changed` is the ending for the habit of looking, and `seen` for a single long stare.
+- The careful total is about 2 s x 13 = 26 s. Passing 35 s needs an average above 2.7 s per customer. A player who habitually holds Shift 3–4 s per customer reaches 39–52 s and survives: 4 s costs +0.4 on a human and +0.8 on an other, and both drain away during the dialogue. Holding 5 s on an other (or 1.5 s on the starer) fills the meter from empty, so the habit has a ceiling. 35 s sits between careful and habitual play, so `changed` is the ending for the habit of looking, and `seen` for a single long stare.
 
 ## The notebook (rules.json)
 
@@ -85,8 +85,8 @@ How the requirements are met:
 
 | id | Title | Condition |
 |---|---|---|
-| `morning` | Morning | All 13 served, fewer than 3 mistakes, total Shift time at most 40 s |
-| `changed` | The shift changed you | Same, but total Shift time above 40 s. In the final scene the player has no shadow. |
+| `morning` | Morning | All 13 served, fewer than 3 mistakes, total Shift time at most 35 s |
+| `changed` | The shift changed you | Same, but total Shift time above 35 s. In the final scene the player has no shadow. |
 | `seen` | It saw you | Noticed meter reached 1.0, or refused the tall customer (#11) |
 | `fired` | You're fired | 3 mistakes, or said yes to Hasan (#13), by Sell or by the keys button |
 

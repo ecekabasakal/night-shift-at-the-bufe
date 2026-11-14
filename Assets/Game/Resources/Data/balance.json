@@ -1,9 +1,9 @@
 {
   "noticedFillPerSecond": 0.1,
-  "noticedFillPerSecondOther": 0.25,
+  "noticedFillPerSecondOther": 0.2,
   "noticedFillPerSecondStare": 0.67,
   "noticedDrainPerSecond": 0.075,
   "maxMistakes": 3,
-  "changedShiftSecondsThreshold": 40.0,
+  "changedShiftSecondsThreshold": 35.0,
   "shiftLengthMinutes": 420
 }

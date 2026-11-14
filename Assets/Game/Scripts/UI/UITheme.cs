@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace NightShift
 {
-    // The small colour palette shared by every screen, plus the few fixed texts that are not in strings.json.
+    // The small colour palette shared by every screen.
     public static class UITheme
     {
         // Dark panels (HUD, dialogue box, ending).
@@ -30,11 +30,5 @@ namespace NightShift
         public static readonly Color InkDim = new Color(0.40f, 0.34f, 0.25f, 1f);
 
         public const float BorderSize = 2f;
-
-        // Key hints added next to texts from strings.json.
-        public const string ConfirmKeyHint = "  [ENTER]";
-        public const string NotebookCloseHint = "TAB: close";
-        public const string SoundOnLabel = "M: sound on";
-        public const string SoundOffLabel = "M: sound off";
     }
 }

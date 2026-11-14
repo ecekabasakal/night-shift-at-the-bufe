@@ -22,6 +22,8 @@ namespace NightShift
         private readonly Image noticedFill;
         private readonly RectTransform marksRoot;
         private readonly Text muteLabel;
+        private readonly string soundOnText;
+        private readonly string soundOffText;
 
         private Image[] marks = new Image[0];
         private float noticed;
@@ -50,7 +52,9 @@ namespace NightShift
             UIBuilder.CreateText(t, "MistakesLabel", 640f, 0f, 128f, StripHeight, data.Get("ui.mistakes"), 16,
                 UITheme.TextMain, TextAnchor.MiddleRight);
             marksRoot = UIBuilder.CreateRect(t, "MistakeMarks", MarksX, 0f, MarksWidth, StripHeight);
-            Button muteButton = UIBuilder.CreateButton(t, "MuteButton", 864f, 10f, 88f, 28f, UITheme.SoundOnLabel, 13, onMute);
+            soundOnText = data.Get("ui.soundOn");
+            soundOffText = data.Get("ui.soundOff");
+            Button muteButton = UIBuilder.CreateButton(t, "MuteButton", 864f, 10f, 88f, 28f, soundOnText, 13, onMute);
             muteLabel = muteButton.GetComponentInChildren<Text>();
 
             SetNoticed(0f);
@@ -92,7 +96,7 @@ namespace NightShift
 
         public void SetMuted(bool muted)
         {
-            muteLabel.text = muted ? UITheme.SoundOffLabel : UITheme.SoundOnLabel;
+            muteLabel.text = muted ? soundOffText : soundOnText;
             muteLabel.color = muted ? UITheme.Danger : UITheme.TextMain;
         }
 
