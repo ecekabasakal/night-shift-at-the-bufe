@@ -12,17 +12,17 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 | 2. Tech Lead | `Assets/Game/Scripts/Core/`, `Docs/ARCHITECTURE.md` | Bitti | Core, csc ile stub'lara karşı 0 hata |
 | 3. Gameplay Programmer | `Assets/Game/Scripts/Gameplay/` | Bitti | GameSession + NoticedMeter; 6 senaryo Unity dışında geçti |
 | 4. UI Programmer | `Assets/Game/Scripts/UI/` | Bitti | 10 dosya, csc 0 hata; yerleşim Unity'de henüz görülmedi |
-| 5. Art Programmer | `Assets/Game/Scripts/Art/` | Devam ediyor | Aşama 2 |
+| 5. Art Programmer | `Assets/Game/Scripts/Art/` | Bitti | 9 dosya; önizlemeler Orchestrator tarafından görüldü, tüm anomaliler okunuyor |
 | 6. Audio Programmer | `Assets/Game/Scripts/Audio/` | Bitti | 12 ses, dalga formu kontrolleri temiz; kulakla dinlenmedi |
-| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Bölüm 1 bitti: 120 test, Unity dışında 120/120; Unity koşusu bekliyor |
+| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Bölüm 2: PlayMode duman testi + oyuncu gözüyle inceleme |
 | 8. Build & Release | `Assets/Game/Editor/`, `.gitignore`, `README.md`, `Builds/` | Bitti (Aşama 2) | ProjectBuilder csc 0 hata; Unity'de henüz çalışmadı |
 
 ## Aşamalar
 
 - [x] Aşama 0 — Ortam kontrolü
 - [x] Aşama 1 — Tasarım ve mimari
-- [ ] Aşama 2 — Üretim
-- [ ] Aşama 3 — Entegrasyon (0 derleme hatası)
+- [x] Aşama 2 — Üretim
+- [x] Aşama 3 — Entegrasyon (0 derleme hatası; EditMode 120/120 Unity'de)
 - [ ] Aşama 4 — QA (tüm testler geçiyor)
 - [ ] Aşama 5 — Build ve teslim
 
@@ -53,3 +53,6 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 - [x] **UI + Designer:** UI'de `strings.json` dışında kalan sabit İngilizce metinler var (`[1] [2] [3]`, `[ENTER]`, `TAB: close`, `M: sound on/off`). Çeviri için `ui.*` anahtarlarına taşınacak; `ui.controls` metnine M ve Enter eklenecek.
 - [ ] **Orchestrator:** WebGL build'de Tab tuşunun tarayıcı odağını canvas'tan kaçırıp kaçırmadığını kontrol et (HUD'daki defter butonu yedek).
 - Not: 14 Kasım'da beş ajan kullanım limitine takıldı, limit sıfırlanınca kaldıkları yerden devam ettirildi.
+
+- [ ] **Orchestrator:** WebGL build'de runtime `SpriteRenderer`'ların çizildiğini doğrula (Sprites/Default shader'ı build'den atılmamalı).
+- [ ] **Art (düşük öncelik, `IDEAS_LATER`):** `changed` sonundaki yansıma, dışarıda duran biri gibi okunuyor; sokak kedisi normal görünümde soluk.
