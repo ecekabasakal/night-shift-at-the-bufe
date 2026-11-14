@@ -1,0 +1,7 @@
+{
+  "name": "NightShift.Editor",
+  "rootNamespace": "NightShift.EditorTools",
+  "references": ["NightShift"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": false
+}
