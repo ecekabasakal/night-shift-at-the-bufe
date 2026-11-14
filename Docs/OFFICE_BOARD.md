@@ -10,12 +10,12 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 | Orchestrator | `Docs/OFFICE_BOARD.md`, entegrasyon | Devam ediyor | Aşama 0 bitti |
 | 1. Game Designer | `Docs/GDD.md`, `Assets/Game/Resources/Data/` | Bitti | 13 müşteri, 7 kural, 118 metin; öz-kontrol temiz |
 | 2. Tech Lead | `Assets/Game/Scripts/Core/`, `Docs/ARCHITECTURE.md` | Bitti | Core, csc ile stub'lara karşı 0 hata |
-| 3. Gameplay Programmer | `Assets/Game/Scripts/Gameplay/` | Devam ediyor | Aşama 2 |
-| 4. UI Programmer | `Assets/Game/Scripts/UI/` | Devam ediyor | Aşama 2 |
+| 3. Gameplay Programmer | `Assets/Game/Scripts/Gameplay/` | Bitti | GameSession + NoticedMeter; 6 senaryo Unity dışında geçti |
+| 4. UI Programmer | `Assets/Game/Scripts/UI/` | Bitti | 10 dosya, csc 0 hata; yerleşim Unity'de henüz görülmedi |
 | 5. Art Programmer | `Assets/Game/Scripts/Art/` | Devam ediyor | Aşama 2 |
 | 6. Audio Programmer | `Assets/Game/Scripts/Audio/` | Devam ediyor | Aşama 2 |
-| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Yapılacak | Aşama 4 |
-| 8. Build & Release | `Assets/Game/Editor/`, `.gitignore`, `README.md`, `Builds/` | Devam ediyor | Aşama 2 + 5 |
+| 7. QA Engineer | `Assets/Game/Tests/`, `Docs/QA_REPORT.md` | Devam ediyor | Testler erken başlatıldı (Core+Gameplay hazır) |
+| 8. Build & Release | `Assets/Game/Editor/`, `.gitignore`, `README.md`, `Builds/` | Bitti (Aşama 2) | ProjectBuilder csc 0 hata; Unity'de henüz çalışmadı |
 
 ## Aşamalar
 
@@ -48,4 +48,6 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 
 ## Açık işler
 
-(yok)
+- [ ] **UI + Designer:** UI'de `strings.json` dışında kalan sabit İngilizce metinler var (`[1] [2] [3]`, `[ENTER]`, `TAB: close`, `M: sound on/off`). Çeviri için `ui.*` anahtarlarına taşınacak; `ui.controls` metnine M ve Enter eklenecek.
+- [ ] **Orchestrator:** WebGL build'de Tab tuşunun tarayıcı odağını canvas'tan kaçırıp kaçırmadığını kontrol et (HUD'daki defter butonu yedek).
+- Not: 14 Kasım'da beş ajan kullanım limitine takıldı, limit sıfırlanınca kaldıkları yerden devam ettirildi.
