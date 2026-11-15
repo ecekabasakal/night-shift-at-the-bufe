@@ -8,6 +8,8 @@ namespace NightShift
     public class KioskView : MonoBehaviour, IKioskView
     {
         private const float CustomerFrameSeconds = 0.3f;
+        private const float CatAlarmSeconds = 1.5f;
+        private const float CatAlarmFrameSeconds = 0.12f;
         private const float ShakeStepSeconds = 0.05f;
         private const float EffectFadePerSecond = 10f;       // the tint fades in over 0.1 s
         private const float NormalVignetteAlpha = 0.4f;      // a little darkness at the edges, always
@@ -17,6 +19,7 @@ namespace NightShift
 
         private Transform shaken;                // background + customer hang here so they shake together
         private SpriteRenderer backgroundRenderer;
+        private SpriteRenderer catAlarmRenderer;
         private SpriteRenderer customerRenderer;
         private SpriteRenderer tintRenderer;
         private SpriteRenderer vignetteRenderer;
@@ -24,12 +27,15 @@ namespace NightShift
 
         private Sprite[] backgroundNormal;
         private Sprite[] backgroundShift;
+        private Sprite[] catAlarmNormal;
+        private Sprite[] catAlarmShift;
         private Sprite[] customerNormal;
         private Sprite[] customerShift;
 
         private bool shiftActive;
         private float clock;                     // seconds since Init, drives the animations
         private float effect;                    // 0 = normal view, 1 = Shift effect fully on
+        private float catAlarmLeft;              // seconds the street cat keeps hissing; 0 = calm
 
         // Fluorescent flicker: long quiet pauses, then a short burst of off/on blinks.
         private bool tubeDark;
@@ -48,6 +54,7 @@ namespace NightShift
             shaken.SetParent(transform, false);
 
             backgroundRenderer = CreateRenderer("Background", shaken, GameLayout.SortBackground);
+            catAlarmRenderer = CreateRenderer("StreetCatAlarm", shaken, GameLayout.SortStreetCat);
             customerRenderer = CreateRenderer("Customer", shaken, GameLayout.SortCustomer);
             tintRenderer = CreateRenderer("ShiftTint", transform, GameLayout.SortShiftTint);
             vignetteRenderer = CreateRenderer("Vignette", transform, GameLayout.SortVignette);
@@ -65,8 +72,10 @@ namespace NightShift
 
             backgroundNormal = sprites.CreateBackgroundFrames(false);
             backgroundShift = sprites.CreateBackgroundFrames(true);
+            catAlarmNormal = sprites.CreateStreetCatAlarmFrames(false);
+            catAlarmShift = sprites.CreateStreetCatAlarmFrames(true);
 
-            EventBus.CustomerArrived += ShowCustomer;
+            EventBus.CustomerArrived += OnCustomerArrived;
             EventBus.CustomerLeft += OnCustomerLeft;
             EventBus.ShiftChanged += SetShiftView;
             EventBus.EndingReached += ShowEnding;
@@ -94,6 +103,13 @@ namespace NightShift
             customerShift = null;
             customerRenderer.enabled = false;
             customerRenderer.sprite = null;
+            StopCatAlarm();
+        }
+
+        public void PlayCatAlarm()
+        {
+            catAlarmLeft = CatAlarmSeconds;
+            Refresh();
         }
 
         public void SetShiftView(bool active)
@@ -128,11 +144,25 @@ namespace NightShift
         public void Tick(float deltaSeconds)
         {
             clock += deltaSeconds;
+            catAlarmLeft = Mathf.Max(0f, catAlarmLeft - deltaSeconds);
             effect = Mathf.MoveTowards(effect, shiftActive ? 1f : 0f, deltaSeconds * EffectFadePerSecond);
 
             TickFlicker(deltaSeconds);
             TickShake(deltaSeconds);
             Refresh();
+        }
+
+        private void OnCustomerArrived(CustomerData customer)
+        {
+            ShowCustomer(customer);
+            if (customer != null && customer.catReacts) PlayCatAlarm();
+            else StopCatAlarm();
+        }
+
+        private void StopCatAlarm()
+        {
+            catAlarmLeft = 0f;
+            catAlarmRenderer.enabled = false;
         }
 
         private void OnCustomerLeft(CustomerData customer)
@@ -192,6 +222,14 @@ namespace NightShift
         {
             Sprite[] background = shiftActive ? backgroundShift : backgroundNormal;
             backgroundRenderer.sprite = background[tubeDark && background.Length > 1 ? 1 : 0];
+
+            catAlarmRenderer.enabled = catAlarmLeft > 0f;
+            if (catAlarmRenderer.enabled)
+            {
+                Sprite[] alarm = shiftActive ? catAlarmShift : catAlarmNormal;
+                int frame = (int)((CatAlarmSeconds - catAlarmLeft) / CatAlarmFrameSeconds) % alarm.Length;
+                catAlarmRenderer.sprite = alarm[frame];
+            }
 
             Sprite[] customer = shiftActive ? customerShift : customerNormal;
             if (customer != null && customer.Length > 0)

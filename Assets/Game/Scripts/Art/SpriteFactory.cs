@@ -44,6 +44,21 @@ namespace NightShift
             return frames;
         }
 
+        public Sprite[] CreateStreetCatAlarmFrames(bool shiftView)
+        {
+            string key = shiftView ? "streetcat-alarm-shift" : "streetcat-alarm-normal";
+            Sprite[] frames;
+            if (frameCache.TryGetValue(key, out frames)) return frames;
+
+            frames = new Sprite[BackgroundPainter.StreetCatAlarmFrameCount];
+            for (int i = 0; i < frames.Length; i++)
+            {
+                frames[i] = ToWorldSprite(BackgroundPainter.PaintStreetCatAlarm(shiftView, i), PivotCentre, key + "-" + i);
+            }
+            frameCache[key] = frames;
+            return frames;
+        }
+
         public Sprite CreateEndingBackground(EndingId ending)
         {
             string key = "ending-" + ending;

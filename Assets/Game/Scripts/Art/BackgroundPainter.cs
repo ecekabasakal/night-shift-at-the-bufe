@@ -36,6 +36,9 @@ namespace NightShift
         private const int GlassTop = 107;
 
         private const int LampX = 160;
+        private const int StreetCatX = 71;
+        private const int StreetCatGround = 66;  // the cat sits on the bottom edge of the window pane
+        public const int StreetCatAlarmFrameCount = 2;
         private const int FridgeLeft = 194, FridgeRight = 234, FridgeBottom = 56, FridgeTop = 110;
 
         private readonly PixelCanvas canvas = new PixelCanvas(Width, Height);
@@ -219,8 +222,8 @@ namespace NightShift
         // A cat sitting on the pavement outside the window, lit from the lamp side.
         private void PaintStreetCat()
         {
-            const int x = 71;
-            const int ground = 66;
+            const int x = StreetCatX;
+            const int ground = StreetCatGround;
             Color32 fur = morning ? Palette.Rgb(70, 62, 70) : Palette.StreetCat;
             Color32 rim = Palette.Mix(fur, morning ? Palette.Sunlight : Palette.Sodium, 0.55f);
 
@@ -242,6 +245,67 @@ namespace NightShift
                 canvas.SetPixel(x - 1, ground + 10, Palette.CatEye);
                 canvas.SetPixel(x + 1, ground + 10, Palette.CatEye);
             }
+        }
+
+        // The same cat with its back up, hissing: an empty canvas with only the cat on it, to lay over the
+        // background. It is bigger than the calm cat on every side, so the calm one disappears behind it.
+        // The two frames differ in where the fur stands on end.
+        public static PixelCanvas PaintStreetCatAlarm(bool otherSide, int frame)
+        {
+            const int x = StreetCatX;
+            const int ground = StreetCatGround;
+            PixelCanvas canvas = new PixelCanvas(Width, Height);
+            Color32 fur = Palette.StreetCat;
+            Color32 rim = Palette.Mix(fur, Palette.Sodium, 0.55f);
+            int bristle = frame % 2;
+
+            canvas.FillEllipse(x, ground + 5, 6.5f, 6.5f, fur);          // arched body
+            canvas.FillEllipse(x, ground + 13, 4.4f, 3.4f, fur);         // head
+            canvas.FillRect(x - 7, ground + 14, 3, 2, fur);              // ears, flat to the sides
+            canvas.FillRect(x + 5, ground + 14, 3, 2, fur);
+            canvas.FillRect(x + 4, ground, 7, 4, fur);                   // tail root
+
+            // Tail straight up, thick as a bottle brush.
+            for (int y = ground; y <= ground + 17; y++)
+            {
+                int half = (y >= ground + 5 && y <= ground + 15) ? 2 : 1;
+                canvas.FillRect(x + 9 - half, y, half * 2 + 1, 1, fur);
+                if (y >= ground + 4 && (y + bristle) % 2 == 0)
+                {
+                    canvas.SetPixel(x + 8 - half, y, fur);
+                    canvas.SetPixel(x + 10 + half, y, rim);
+                }
+            }
+
+            // Fur standing on end along the back.
+            for (int i = 0; i < 12; i++)
+            {
+                float angle = Mathf.PI * (i + 0.5f * bristle) / 11.5f;
+                int px = Mathf.RoundToInt(x + 7.6f * Mathf.Cos(angle));
+                int py = Mathf.RoundToInt(ground + 5 + 7.6f * Mathf.Sin(angle));
+                canvas.SetPixel(px, py, px > x + 2 ? rim : fur);
+            }
+            canvas.FillRect(0, 0, Width, ground, Palette.Clear);         // nothing below the pane
+
+            canvas.Line(x + 6, ground + 2, x + 6, ground + 7, rim);
+            canvas.Line(x + 11, ground + 1, x + 11, ground + 4, rim);
+            canvas.SetPixel(x + 4, ground + 13, rim);
+            canvas.SetPixel(x + 7, ground + 15, rim);
+
+            canvas.FillRect(x - 3, ground + 13, 2, 2, Palette.CatEye);   // eyes wide open
+            canvas.FillRect(x + 2, ground + 13, 2, 2, Palette.CatEye);
+            canvas.FillRect(x - 1, ground + 10 - bristle, 3, 2 + bristle, Palette.MouthDark);
+            canvas.SetPixel(x - 1, ground + 11, Palette.Tooth);
+            canvas.SetPixel(x + 1, ground + 11, Palette.Tooth);
+
+            if (otherSide)
+            {
+                for (int i = 0; i < canvas.Pixels.Length; i++)
+                {
+                    canvas.Pixels[i] = Palette.OtherSide(canvas.Pixels[i]);
+                }
+            }
+            return canvas;
         }
 
         // The player's own reflection in the window (ending pictures only).
