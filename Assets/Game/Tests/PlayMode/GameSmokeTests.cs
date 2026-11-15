@@ -23,15 +23,34 @@ namespace NightShift.PlayModeTests
         private const string SpecialButton = "Actions/SpecialButton";
         private const string FeedbackContinueButton = "Actions/ContinueButton";
         private const string PlayAgainButton = "EndingScreen/PlayAgainButton";
+        private const string HandoverPrompt = "EndingScreen/HandoverPrompt";
+        private const string HandoverButtonPrefix = "EndingScreen/HandoverButton"; // + 1..3
+        private const string HandoverDone = "EndingScreen/HandoverDone";
+        private const string NotebookButton = "Hud/NotebookButton";
+        private const string NotebookCloseButton = "Notebook/Paper/CloseButton";
+        private const string PreviousNoteHeading = "Notebook/Paper/PreviousNoteHeading";
+        private const string PreviousNote = "Notebook/Paper/PreviousNote";
+
+        private const int ChosenNoteIndex = 1; // the second of the three handover notes
 
         private GameData data;
+        private MemoryNoteStore noteStore;
 
         [UnitySetUp]
         public IEnumerator LoadMainScene()
         {
             data = GameData.LoadFromResources();
+            // Before the scene creates GameBootstrap: the tests must never write the developer's PlayerPrefs.
+            noteStore = new MemoryNoteStore();
+            GameBootstrap.NoteStoreOverride = noteStore;
             SceneManager.LoadScene("Main");
             yield return WaitFrames(3);
+        }
+
+        [TearDown]
+        public void RemoveNoteStoreOverride()
+        {
+            GameBootstrap.NoteStoreOverride = null;
         }
 
         [UnityTest]
@@ -52,7 +71,18 @@ namespace NightShift.PlayModeTests
             {
                 CustomerData customer = data.Customers[i];
                 AssertCustomerIsShown(customer);
-                if (i == 0) yield return Screenshot("3-customer");
+                if (i == 0)
+                {
+                    yield return Screenshot("3-customer");
+
+                    // Nobody has left a note yet: the notebook has no previous-note block.
+                    yield return Click(NotebookButton);
+                    Assert.That(IsShown("Notebook"), Is.True, "notebook after its button");
+                    Assert.That(IsShown(PreviousNoteHeading), Is.False, "previous-note heading without a saved note");
+                    Assert.That(IsShown(PreviousNote), Is.False, "previous note without a saved note");
+                    yield return Click(NotebookCloseButton);
+                    Assert.That(IsShown("Notebook"), Is.False, "notebook after Close");
+                }
 
                 yield return Click(ButtonFor(customer.GetCorrectAction()));
 
@@ -63,8 +93,19 @@ namespace NightShift.PlayModeTests
                 yield return Click(FeedbackContinueButton);
             }
 
+            // A good ending first asks for a handover note; Play again only comes after one is chosen.
             AssertEndingIsShown(EndingId.Morning);
+            AssertHandoverChoiceIsShown();
+            Assert.That(noteStore.Load(), Is.EqualTo(""), "nothing is saved before a note is chosen");
             yield return Screenshot("5-ending");
+
+            string chosenKey = HandoverNotes.OptionKey(ChosenNoteIndex);
+            yield return Click(HandoverButtonPrefix + (ChosenNoteIndex + 1));
+
+            AssertEndingIsShown(EndingId.Morning);
+            AssertHandoverDoneIsShown();
+            Assert.That(noteStore.Load(), Is.EqualTo(chosenKey), "the store keeps the key of the chosen note");
+            yield return Screenshot("6-handover-done");
 
             yield return Click(PlayAgainButton);
             AssertOnlyTitleIsShown();
@@ -75,6 +116,14 @@ namespace NightShift.PlayModeTests
             yield return Click(NoteContinueButton);
             AssertCustomerIsShown(data.Customers[0]);
             AssertHudIsReset();
+
+            // The note left this morning is now in the notebook, after the rules.
+            yield return Click(NotebookButton);
+            Assert.That(TextOf(PreviousNoteHeading), Is.EqualTo(data.Get("ui.previousNote")), "previous-note heading");
+            Assert.That(TextOf(PreviousNote), Is.EqualTo(data.Get(chosenKey)), "previous note");
+            yield return Screenshot("7-notebook-note");
+            yield return Click(NotebookCloseButton);
+
             yield return Click(ButtonFor(data.Customers[0].GetCorrectAction()));
             yield return Click(FeedbackContinueButton);
             AssertCustomerIsShown(data.Customers[1]);
@@ -111,6 +160,8 @@ namespace NightShift.PlayModeTests
 
             Assert.That(mistakes, Is.EqualTo(maxMistakes), "The data should allow enough ordinary mistakes to get fired");
             AssertEndingIsShown(EndingId.Fired);
+            AssertNoHandoverIsShown();
+            Assert.That(noteStore.Load(), Is.EqualTo(""), "a lost night leaves no note");
 
             yield return Click(PlayAgainButton);
             AssertOnlyTitleIsShown();
@@ -174,6 +225,45 @@ namespace NightShift.PlayModeTests
 
             SpriteRenderer picture = RendererOf("KioskView/EndingPicture");
             Assert.That(picture.enabled && picture.sprite != null, Is.True, "ending picture");
+        }
+
+        // Good ending, before a note is chosen: the prompt and the three notes, no Play again.
+        private void AssertHandoverChoiceIsShown()
+        {
+            Assert.That(TextOf(HandoverPrompt), Is.EqualTo(data.Get("ui.handoverPrompt")), "handover prompt");
+            for (int i = 0; i < HandoverNotes.OptionCount; i++)
+            {
+                string button = HandoverButtonPrefix + (i + 1);
+                Assert.That(IsShown(button), Is.True, button);
+                Assert.That(TextOf(button + "/Label"), Is.EqualTo("[" + (i + 1) + "] " + data.Get(HandoverNotes.OptionKey(i))), button + " label");
+            }
+            Assert.That(IsShown(HandoverDone), Is.False, "handover confirmation before a note is chosen");
+            Assert.That(IsShown(PlayAgainButton), Is.False, "Play again before a note is chosen");
+        }
+
+        // Good ending, after a note is chosen: the confirmation line and Play again.
+        private void AssertHandoverDoneIsShown()
+        {
+            AssertNoHandoverChoiceIsShown();
+            Assert.That(TextOf(HandoverDone), Is.EqualTo(data.Get("ui.handoverDone")), "handover confirmation");
+            Assert.That(IsShown(PlayAgainButton), Is.True, "Play again after a note is chosen");
+        }
+
+        // Bad ending: the plain ending screen.
+        private void AssertNoHandoverIsShown()
+        {
+            AssertNoHandoverChoiceIsShown();
+            Assert.That(IsShown(HandoverDone), Is.False, "handover confirmation on a lost night");
+            Assert.That(IsShown(PlayAgainButton), Is.True, "Play again on a lost night");
+        }
+
+        private static void AssertNoHandoverChoiceIsShown()
+        {
+            Assert.That(IsShown(HandoverPrompt), Is.False, "handover prompt");
+            for (int i = 0; i < HandoverNotes.OptionCount; i++)
+            {
+                Assert.That(IsShown(HandoverButtonPrefix + (i + 1)), Is.False, HandoverButtonPrefix + (i + 1));
+            }
         }
 
         private void AssertHudIsReset()

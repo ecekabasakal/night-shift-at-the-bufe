@@ -13,7 +13,7 @@ namespace NightShift.Tests
         private static readonly string[] InstantEndings = { "seen", "fired" };
         private static readonly string[] Kinds = { "human", "cat" };
         private static readonly string[] Accessories = { "none", "whistle", "glasses", "bag", "scarf" };
-        private static readonly string[] Items = { "tost", "ayran", "simit", "cigarettes", "water", "matches", "cekirdek", "catfood", "none" };
+        private static readonly string[] Items = { "tost", "ayran", "simit", "gevrek", "boyoz", "kumru", "cigarettes", "water", "matches", "cekirdek", "catfood", "none" };
         private static readonly string[] AnomalyVocabulary =
         {
             Anomalies.NoShadow, Anomalies.ReversedShadow, Anomalies.NoEyes, Anomalies.WrongEyes, Anomalies.ExtraFingers,
@@ -23,10 +23,17 @@ namespace NightShift.Tests
         {
             "ui.title", "ui.tagline", "ui.shiftHint", "ui.start", "ui.sell", "ui.refuse", "ui.notebookTitle", "ui.notebookHint",
             "ui.noticed", "ui.mistakes", "ui.playAgain", "ui.continue", "ui.controls", "intro.note",
-            "ui.keyEnter", "ui.notebookClose", "ui.soundOn", "ui.soundOff" // used by the UI code
+            "ui.keyEnter", "ui.notebookClose", "ui.soundOn", "ui.soundOff", // used by the UI code
+            // v2
+            "item.gevrek", "item.boyoz", "item.kumru", "rule.r8_gevrek",
+            "handover.option1", "handover.option2", "handover.option3",
+            HandoverNotes.PromptKey, HandoverNotes.DoneKey, HandoverNotes.HeadingKey
         };
         private static readonly Regex HexColor = new Regex("^#[0-9A-Fa-f]{6}$");
         private const int AyranCutoffMinute = 240; // 03:00
+        private const int CatMistakeFromMinute = 240; // 03:00
+        private const string GevrekRuleId = "r8_gevrek";
+        private const int MaxHandoverNoteLength = 110;
 
         private GameData data;
         private CustomerData[] customers;
@@ -371,6 +378,100 @@ namespace NightShift.Tests
             Check(Array.Exists(customers, c => c.HasSpecialAction() && c.correctAction == "special"), "No customer for whom the special button is correct");
             Check(Array.Exists(customers, c => c.HasSpecialAction() && c.correctAction != "special"), "No decoy special button");
             AssertNoProblems();
+        }
+
+        // ---- v2: street cat, gevrek rule, shift handover (DATA_SCHEMA.md "Addendum v2") ----
+
+        [Test]
+        public void Design_TheCatReactsToEveryOtherExceptOneAfter0300_AndToNoHuman()
+        {
+            List<CustomerData> missedOthers = new List<CustomerData>();
+            foreach (CustomerData c in customers)
+            {
+                if (!c.isOther) Check(!c.catReacts, c.id + ": the cat reacts to an ordinary human");
+                else if (!c.catReacts) missedOthers.Add(c);
+            }
+
+            Check(missedOthers.Count == 1, missedOthers.Count + " 'other' customers have catReacts false (the cat makes exactly 1 mistake)");
+            foreach (CustomerData c in missedOthers)
+            {
+                Check(c.arrivalMinute >= CatMistakeFromMinute, c.id + ": the cat's mistake is at minute " + c.arrivalMinute + ", before 03:00");
+            }
+            AssertNoProblems();
+        }
+
+        [Test]
+        public void Design_SimitIsRequestedByExactlyTwoOthers_RefusedUnderTheGevrekRule()
+        {
+            int simitRequests = 0;
+            foreach (CustomerData c in customers)
+            {
+                if (c.requestItem != "simit") continue;
+                simitRequests++;
+                Check(c.isOther, c.id + ": asks for simit but is an ordinary human");
+                Check(c.ruleId == GevrekRuleId, c.id + ": asks for simit with ruleId '" + c.ruleId + "'");
+                Check(c.correctAction == "refuse", c.id + ": asks for simit with correctAction '" + c.correctAction + "'");
+            }
+            Check(simitRequests == 2, simitRequests + " customers ask for simit (must be exactly 2)");
+            AssertNoProblems();
+        }
+
+        [Test]
+        public void Design_AnOrdinaryHumanAsksForGevrek_AndIsSoldIt()
+        {
+            Check(Array.Exists(customers, c => !c.isOther && c.requestItem == "gevrek" && c.ruleId == GevrekRuleId && c.correctAction == "sell"),
+                "No ordinary human requests gevrek with ruleId " + GevrekRuleId + " and correctAction sell");
+            foreach (CustomerData c in customers)
+            {
+                if (c.isOther || c.requestItem != "gevrek") continue;
+                Check(data.Get(c.requestKey).IndexOf("gevrek", StringComparison.OrdinalIgnoreCase) >= 0,
+                    c.id + ": requests gevrek but the request line does not say 'gevrek'");
+            }
+            AssertNoProblems();
+        }
+
+        [Test]
+        public void Design_NoOrdinaryHumanSaysSimit()
+        {
+            foreach (CustomerData c in customers)
+            {
+                if (c.isOther) continue;
+                Check(!SaysSimit(c.greetingKey), c.id + ": greeting line says 'simit'");
+                Check(!SaysSimit(c.requestKey), c.id + ": request line says 'simit'");
+            }
+            AssertNoProblems();
+        }
+
+        private bool SaysSimit(string key)
+        {
+            return data.Get(key).IndexOf("simit", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        [Test]
+        public void Rules_TheGevrekRuleExists_AndNeedsNoShift()
+        {
+            RuleData rule = Array.Find(data.Rules, r => r.id == GevrekRuleId);
+            Assert.That(rule, Is.Not.Null, "rules.json has no " + GevrekRuleId);
+            Assert.That(rule.needsShift, Is.False, GevrekRuleId + " is decided by what the customer says, not by Shift");
+            Assert.That(rule.textKey, Is.EqualTo("rule." + GevrekRuleId));
+        }
+
+        [Test]
+        public void Strings_HandoverNotesAreAtMost110Characters()
+        {
+            for (int i = 0; i < HandoverNotes.OptionCount; i++)
+            {
+                string key = HandoverNotes.OptionKey(i);
+                Check(data.Has(key), "Missing required key: " + key);
+                Check(data.Get(key).Length <= MaxHandoverNoteLength, key + " is " + data.Get(key).Length + " characters (max " + MaxHandoverNoteLength + ")");
+            }
+            AssertNoProblems();
+        }
+
+        [Test]
+        public void Strings_PreviousNoteHeadingIsExact()
+        {
+            Assert.That(data.Get("ui.previousNote"), Is.EqualTo("Previous shift's note"));
         }
     }
 }
