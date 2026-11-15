@@ -105,6 +105,35 @@ namespace NightShift
             return Finish(samples, rate, 0.003, 0.01);
         }
 
+        // Street cat: half a second of airy noise with the low end removed, quick to start and fading out.
+        public static float[] CatHiss()
+        {
+            int rate = Synth.OneShotRate;
+            const double lengthSeconds = 0.5;
+            const double lowCutHz = 2500.0;
+            const double highCutHz = 9000.0;
+            System.Random rng = new System.Random(53);
+            float[] samples = Synth.Silence(lengthSeconds, rate);
+
+            double lowCut = 1.0 - Math.Exp(-Math.PI * 2.0 * lowCutHz / rate);
+            double highCut = 1.0 - Math.Exp(-Math.PI * 2.0 * highCutHz / rate);
+            double below = 0.0;  // the part of the noise under lowCutHz, which is taken out
+            double smooth = 0.0;
+            for (int i = 0; i < samples.Length; i++)
+            {
+                double t = (double)i / rate;
+                double noise = rng.NextDouble() * 2.0 - 1.0;
+                below += lowCut * (noise - below);
+                smooth += highCut * (noise - below - smooth);
+                double envelope = Math.Min(1.0, t / 0.04) * Math.Exp(-t / 0.22);
+                samples[i] = (float)(envelope * smooth);
+            }
+
+            Finish(samples, rate, 0.003, 0.15);
+            Synth.Normalise(samples, DensePeak);
+            return samples;
+        }
+
         // "Ka-ching": two mechanical clicks, then a bright ring.
         public static float[] CashRegister()
         {

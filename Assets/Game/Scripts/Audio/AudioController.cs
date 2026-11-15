@@ -11,6 +11,7 @@ namespace NightShift
         private const float DroneVolume = 0.3f;
         private const float DoorBellVolume = 0.45f;
         private const float WhistleVolume = 0.35f;
+        private const float CatHissVolume = 0.3f;
         private const float CashRegisterVolume = 0.5f;
         private const float RefuseVolume = 0.4f;
         private const float ErrorVolume = 0.45f;
@@ -28,6 +29,9 @@ namespace NightShift
         private const float HeartbeatSlowBpm = 60f;
         private const float HeartbeatFastBpm = 150f;
 
+        private const float HissDelayAfterBell = 0.35f;    // seconds after the bell starts
+        private const float HissDelayAfterWhistle = 0.65f; // the whistle's second blast starts at 0.55 s
+
         private IShiftVision vision;
 
         private AudioSource humSource;
@@ -37,6 +41,7 @@ namespace NightShift
 
         private AudioClip doorBellClip;
         private AudioClip whistleClip;
+        private AudioClip catHissClip;
         private AudioClip cashRegisterClip;
         private AudioClip refuseClip;
         private AudioClip errorClip;
@@ -49,6 +54,8 @@ namespace NightShift
         private float humLevel;    // 0..1 fade position
         private float droneLevel;  // 0..1 fade position
         private float secondsToNextBeat;
+        private bool hissPending;
+        private float secondsToHiss;
 
         public bool IsMuted
         {
@@ -66,6 +73,7 @@ namespace NightShift
 
             doorBellClip = ToClip("DoorBell", SoundBank.DoorBell(), Synth.OneShotRate);
             whistleClip = ToClip("Whistle", SoundBank.Whistle(), Synth.OneShotRate);
+            catHissClip = ToClip("CatHiss", SoundBank.CatHiss(), Synth.OneShotRate);
             cashRegisterClip = ToClip("CashRegister", SoundBank.CashRegister(), Synth.OneShotRate);
             refuseClip = ToClip("Refuse", SoundBank.Refuse(), Synth.OneShotRate);
             errorClip = ToClip("Error", SoundBank.Error(), Synth.OneShotRate);
@@ -81,6 +89,7 @@ namespace NightShift
 
             EventBus.PhaseChanged += OnPhaseChanged;
             EventBus.CustomerArrived += OnCustomerArrived;
+            EventBus.CustomerLeft += OnCustomerLeft;
             EventBus.ShiftChanged += SetShiftDrone;
             EventBus.DecisionMade += OnDecisionMade;
             EventBus.EndingReached += OnEndingReached;
@@ -121,6 +130,11 @@ namespace NightShift
             PlayOneShot(whistleClip, WhistleVolume);
         }
 
+        public void PlayCatHiss()
+        {
+            PlayOneShot(catHissClip, CatHissVolume);
+        }
+
         public void PlayCashRegister()
         {
             PlayOneShot(cashRegisterClip, CashRegisterVolume);
@@ -147,6 +161,7 @@ namespace NightShift
 
             UpdateHumAndDrone(deltaSeconds);
             UpdateHeartbeat(deltaSeconds);
+            UpdatePendingHiss(deltaSeconds);
         }
 
         // ---------- EventBus handlers ----------
@@ -159,10 +174,19 @@ namespace NightShift
         private void OnCustomerArrived(CustomerData customer)
         {
             PlayDoorBell();
-            if (customer != null && customer.appearance != null && customer.appearance.accessory == "whistle")
+            bool whistle = customer != null && customer.appearance != null && customer.appearance.accessory == "whistle";
+            if (whistle)
             {
                 PlayWhistle();
             }
+
+            hissPending = started && customer != null && customer.catReacts;
+            secondsToHiss = whistle ? HissDelayAfterWhistle : HissDelayAfterBell;
+        }
+
+        private void OnCustomerLeft(CustomerData customer)
+        {
+            hissPending = false;
         }
 
         private void OnDecisionMade(DecisionResult result)
@@ -183,6 +207,7 @@ namespace NightShift
 
         private void OnEndingReached(EndingId ending)
         {
+            hissPending = false;
             SetShiftDrone(false);
             PlayEndingStinger(ending);
         }
@@ -190,6 +215,7 @@ namespace NightShift
         // Back to the state right after Start was clicked: only the hum is playing. Mute is kept.
         private void OnRestartRequested()
         {
+            hissPending = false;
             if (!started) return;
 
             nightRunning = false;
@@ -244,6 +270,18 @@ namespace NightShift
             heartSource.volume = Mathf.Lerp(HeartbeatMinVolume, HeartbeatMaxVolume,
                 Mathf.InverseLerp(HeartbeatSilentBelow, 1f, noticed));
             heartSource.Play(); // restarts the clip; it is shorter than the fastest beat interval
+        }
+
+        // Plays the cat's hiss once its delay after the door bell has run out.
+        private void UpdatePendingHiss(float deltaSeconds)
+        {
+            if (!hissPending) return;
+
+            secondsToHiss -= deltaSeconds;
+            if (secondsToHiss > 0f) return;
+
+            hissPending = false;
+            PlayCatHiss();
         }
 
         // ---------- Helpers ----------
