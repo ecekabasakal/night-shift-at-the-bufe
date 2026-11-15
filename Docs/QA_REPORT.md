@@ -162,3 +162,17 @@ Done by the orchestrator, not by QA: headless Chrome with software WebGL, real k
 - Firefox, Safari, and the game inside the itch.io iframe.
 - Screenshots from the PlayMode test (none were written in batchmode).
 - The 1.0 s keyboard delay on the ending screen (B2 fix) is in the code but has no test.
+
+## v2 addendum (15 November) — gevrek rule, street cat, shift handover
+
+| Run | Result |
+|---|---|
+| Unity 6000.6.9f1 batchmode compile | 0 errors |
+| Unity batchmode, EditMode (`Logs/editmode-results.xml`) | **155 of 155 passed** (8 fixtures; was 120 in 7) |
+| Unity batchmode, PlayMode (`Logs/playmode-results.xml`) | **2 of 2 passed** |
+| WebGL build in headless Chrome (orchestrator), clean 14-customer night | No console errors. Cat alarm seen in normal and Shift look; handover prompt and three notes on `morning`; done line and Play again after choosing; note shown in the notebook on the next night. |
+
+New tests: 7 data invariants in `DataConsistencyTests` (cat's single miss after 03:00, two simit askers, gevrek seller, no human says "simit", rule 8, note length, heading text), `HandoverNotesTests` (25 cases, incl. `MemoryNoteStore`), 3 more generated cases in `CustomerDecisionTests` (14 customers). PlayMode tests use `GameBootstrap.NoteStoreOverride = new MemoryNoteStore()` and go through the handover choice.
+
+Not checked: the cat hiss by ear; the saved note after a page reload (PlayerPrefs / IndexedDB) in a real browser; the `changed` ending's handover by hand.
+

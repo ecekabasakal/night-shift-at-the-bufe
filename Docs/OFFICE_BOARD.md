@@ -72,16 +72,30 @@ Sıra: şema eki (Orchestrator) → Designer + Tech Lead → Gameplay / UI / Art
 
 | Ajan | Durum | Not |
 |---|---|---|
-| Orchestrator | Devam ediyor | `DATA_SCHEMA.md` ek v2 yazıldı |
-| Game Designer | Devam ediyor | veri + GDD |
-| Tech Lead | Devam ediyor | Core arayüzleri + ARCHITECTURE |
-| Gameplay | Yapılacak | |
-| UI | Yapılacak | |
-| Art | Yapılacak | |
-| Audio | Yapılacak | |
-| QA | Yapılacak | |
+| Orchestrator | Bitti | derleme 0 hata; EditMode 155/155, PlayMode 2/2; WebGL build + zip yenilendi; tarayıcıda tam gece oynatıldı; push edildi |
+| Game Designer | Bitti | veri + GDD zaten tamamdı; öz-kontrol temiz (14 müşteri, 8 kural, 138 metin) |
+| Tech Lead | Bitti | Core arayüzleri, `HandoverNotes.cs`, ARCHITECTURE §8 |
+| Gameplay | Bitti | iş yok (`GameSession` değişmedi, ARCHITECTURE §8.4) |
+| UI | Bitti | `EndingScreen` tamamlandı; `UIController` devir notu API'si, `NotebookPanel` önceki not bloğu, `UIBuilder.SetRect` |
+| Art | Bitti | tıslayan kedi kareleri + `KioskView.PlayCatAlarm`; önizleme Orchestrator tarafından görüldü |
+| Audio | Bitti | `SoundBank.CatHiss` + `PlayCatHiss`, zilden 0,35 sn sonra (düdüklü müşteride 0,65 sn); kulakla dinlenmedi |
+| QA | Bitti | EditMode 155/155 (8 fixture), PlayMode 2/2 (Unity batchmode); devir notu akışı PlayMode testinde |
+
+Not: 15 Kasım'da Designer, UI, Art ve Audio ajanları kullanım limitine takıldı; proje 7 hatayla derlenmiyordu. Limit yüzünden kalan işler paralel değil sırayla yapılıyor.
 
 Kararlar (v2):
 1. Kedinin tepkisi veride açık durur (`catReacts`); "bir kez yanılma" bir veri değişmezidir ve testle korunur.
 2. İyi sonlar = `morning` ve `changed`. Not seçimi zorunlu; PlayerPrefs'te metin değil string anahtarı saklanır.
 3. Commit'lere Co-Authored-By eklenmez.
+4. Kedi tıslaması zilden 0,35 sn sonra, düdüklü müşteride 0,65 sn sonra başlar (Audio'nun seçimi, onaylandı).
+5. Devir notu ekranında 1/2/3 tuşları ilk 1 sn yok sayılır (yanlışlıkla seçimi önlemek için; UI'nin seçimi, onaylandı).
+
+Sonuç (v2, 15 Kasım):
+- Unity batchmode derleme: 0 hata. EditMode 155/155, PlayMode 2/2.
+- WebGL build 31 MB, `Builds/night-shift-webgl.zip` 9,7 MB (yenilendi).
+- Başsız Chrome'da 14 müşterilik temiz gece oynatıldı, konsol hatası yok: kedi alarmı (normal + Shift), `morning` sonunda not seçimi, "Note taped to the till.", ikinci gecede defterde "Previous shift's note" görüldü.
+
+Açık işler (v2):
+- [ ] **Kullanıcı:** Kedi tıslamasını gerçek tarayıcıda dinle (zili maskelememeli); sayfa yenilendikten sonra notun defterde kaldığını dene (başsız testte yalnızca aynı oturumda görüldü).
+- [ ] Bilinen küçük risk: not seçildikten sonra "Work another night" butonu 2. ve 3. not butonlarının yerinde çıkıyor; hızlı çift tıklama onay satırını atlatabilir.
+- [ ] Shift görünümünde tıslayan kedi düşük kontrastlı (sakin kediyle aynı düzeyde).
