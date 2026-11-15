@@ -25,6 +25,7 @@ namespace NightShift
         public event Action<PlayerAction> ActionChosen;
         public event Action PlayAgainClicked;
         public event Action MuteClicked;
+        public event Action<int> HandoverNoteChosen;
 
         private GameData data;
         private EventSystem eventSystem;
@@ -49,6 +50,9 @@ namespace NightShift
         // (for example Space as "Start" and then again as "Continue" on the screen that just opened).
         private int lastIntentFrame = -1;
 
+        // True while the ending screen waits for a handover note: Play again is off, keys 1 / 2 / 3 pick a note.
+        private bool handoverChoice;
+
         public bool IsNotebookOpen
         {
             get { return notebook != null && notebook.IsOpen; }
@@ -69,7 +73,7 @@ namespace NightShift
             notebook = new NotebookPanel(root, data, ToggleNotebook);
             title = new TitleScreen(root, data, PressStart);
             note = new NoteScreen(root, data, PressContinue);
-            ending = new EndingScreen(root, data, PressPlayAgain);
+            ending = new EndingScreen(root, data, PressPlayAgain, PressNote);
 
             SwitchTo(UIScreenId.None);
         }
@@ -109,7 +113,27 @@ namespace NightShift
             ending.SetEnding(endingId,
                 data.Get(DataParsing.EndingTitleKey(endingId)),
                 data.Get(DataParsing.EndingBodyKey(endingId)));
+            ending.ShowPlain();
             SwitchTo(UIScreenId.Ending);
+        }
+
+        public void ShowEndingWithHandover(EndingId endingId)
+        {
+            ending.SetEnding(endingId,
+                data.Get(DataParsing.EndingTitleKey(endingId)),
+                data.Get(DataParsing.EndingBodyKey(endingId)));
+            ending.ShowHandoverChoice();
+            SwitchTo(UIScreenId.Ending);
+            handoverChoice = true;
+        }
+
+        public void ShowHandoverDone()
+        {
+            if (screen != UIScreenId.Ending) return;
+            handoverChoice = false;
+            ending.ShowHandoverDone();
+            confirmDelay = EndingConfirmDelay;
+            ClearSelection();
         }
 
         // ---------- HUD values ----------
@@ -137,6 +161,11 @@ namespace NightShift
         public void SetMuted(bool muted)
         {
             hud.SetMuted(muted);
+        }
+
+        public void SetPreviousNote(string noteText)
+        {
+            notebook.SetPreviousNote(noteText);
         }
 
         // ---------- Per frame ----------
@@ -185,7 +214,14 @@ namespace NightShift
                     break;
 
                 case UIScreenId.Ending:
-                    if (confirm) PressPlayAgain();
+                    if (handoverChoice)
+                    {
+                        if (confirmDelay > 0f) break;
+                        if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) PressNote(0);
+                        else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) PressNote(1);
+                        else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) PressNote(2);
+                    }
+                    else if (confirm) PressPlayAgain();
                     break;
             }
         }
@@ -215,8 +251,14 @@ namespace NightShift
 
         private void PressPlayAgain()
         {
-            if (screen != UIScreenId.Ending || !BeginIntent()) return;
+            if (screen != UIScreenId.Ending || handoverChoice || !BeginIntent()) return;
             if (PlayAgainClicked != null) PlayAgainClicked();
+        }
+
+        private void PressNote(int optionIndex)
+        {
+            if (screen != UIScreenId.Ending || !handoverChoice || !BeginIntent()) return;
+            if (HandoverNoteChosen != null) HandoverNoteChosen(optionIndex);
         }
 
         private void PressMute()
@@ -251,6 +293,7 @@ namespace NightShift
         private void SwitchTo(UIScreenId newScreen)
         {
             screen = newScreen;
+            handoverChoice = false;
             if (newScreen == UIScreenId.Ending) confirmDelay = EndingConfirmDelay;
             else if (newScreen == UIScreenId.Feedback) confirmDelay = FeedbackConfirmDelay;
             else confirmDelay = 0f;

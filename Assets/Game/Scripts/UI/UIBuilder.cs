@@ -34,6 +34,13 @@ namespace NightShift
             return rect;
         }
 
+        // Moves and resizes a rectangle made by CreateRect (its children are not touched).
+        public static void SetRect(RectTransform rect, float x, float y, float width, float height)
+        {
+            rect.anchoredPosition = new Vector2(x, y);
+            rect.sizeDelta = new Vector2(width, height);
+        }
+
         // A flat coloured rectangle (no sprite).
         public static Image CreateImage(Transform parent, string name, float x, float y, float width, float height, Color color)
         {
