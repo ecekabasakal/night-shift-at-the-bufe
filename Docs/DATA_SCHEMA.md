@@ -101,3 +101,34 @@ The Noticed meter runs 0..1. Fill rates apply while Shift is held (base rate whe
 ## Actions
 
 `sell`, `refuse`, `special` — keyboard 1 / 2 / 3. A decision is correct iff it equals `correctAction`.
+
+---
+
+# Addendum v2 — gevrek rule, street cat, shift handover
+
+Status: **APPROVED by Orchestrator (v2)**. Everything above still holds unless changed here.
+
+## customers.json
+
+- New field on every customer: `catReacts` (bool). True = when this customer arrives, the street cat outside the window hisses and puffs up.
+  Invariant: `catReacts` is true for every `isOther` customer **except exactly one** whose `arrivalMinute` ≥ 240 (the cat's single mistake after 03:00), and false for every ordinary human.
+- `requestItem` vocabulary gains `gevrek`, `boyoz`, `kumru`. `gevrek` and `simit` are the same bread ring: `gevrek` when the customer uses the İzmir word, `simit` when they say "simit". Each has an `item.<id>` string.
+- Customer count stays within 10–14.
+- New rule `r8_gevrek` (`needsShift: false`): a real İzmirli never says "simit", they say "gevrek"; someone who asks for "simit" is refused. The rule text carries a short gloss for foreign players. Exactly 2 customers ask for "simit"; both are `isOther`, `ruleId: r8_gevrek`, `correctAction: refuse`. Ordinary locals who want the bread ring say "gevrek" in their `requestKey` line (at least one such customer, `ruleId: r8_gevrek`, `correctAction: sell`). The word "simit" must not appear in any ordinary human's dialogue lines.
+
+## strings.json — new required keys
+
+| Key | Meaning |
+|---|---|
+| `item.gevrek`, `item.boyoz`, `item.kumru` | Item names. |
+| `rule.r8_gevrek` | The new rule's text. |
+| `handover.option1`, `handover.option2`, `handover.option3` | The three ready-made notes the player can leave for the morning worker (each ≤ 110 characters). |
+| `ui.handoverPrompt` | Prompt above the three notes on a good ending ("Leave a note for the morning shift"). |
+| `ui.handoverDone` | Short confirmation after choosing. |
+| `ui.previousNote` | Notebook heading, exactly "Previous shift's note". |
+
+## Shift handover
+
+- Good endings = `morning` and `changed`. On a good ending the ending screen shows `ui.handoverPrompt` and the three notes; the player must pick one (mouse or keys 1/2/3); then `ui.handoverDone` and Play again appear. `seen` / `fired` endings are unchanged.
+- The chosen note is saved in PlayerPrefs under the key `nightshift.handoverNote`; the stored value is the **string key** (e.g. `handover.option2`), not the text, so it survives a translation.
+- In later games (including after a page reload) the notebook shows, after the last rule, the heading `ui.previousNote` and the saved note's text. No saved note, or a stored key that no longer exists in strings.json = nothing is shown.

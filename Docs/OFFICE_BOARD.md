@@ -61,3 +61,27 @@ Son teslim: 1 Aralık 2026 13:37 PST (TSİ 2 Aralık 00:37).
 - [x] **Art (ertelendi → `IDEAS_LATER.md`):** `changed` sonundaki yansıma, dışarıda duran biri gibi okunuyor; sokak kedisi normal görünümde soluk.
 - [ ] **Kullanıcı:** Sesleri gerçek tarayıcıda dinle (başsız testte duyulamadı); `changed` sonunu elle dene; Firefox/Safari ve itch.io iframe'inde Tab/Space davranışına bak.
 - [ ] **Kullanıcı:** README'de itch.io linki, krediler ve lisans TODO.
+
+---
+
+## Sürüm 2 (15 Kasım) — üç yeni özellik
+
+Kapsam: (1) gevrek/simit kuralı + boyoz, kumru; (2) sokak kedisi ötekilere tıslar, 03:00'ten sonra bir kez yanılır; (3) vardiya devri notu (PlayerPrefs). Yeni fikirler `IDEAS_LATER.md`'ye.
+
+Sıra: şema eki (Orchestrator) → Designer + Tech Lead → Gameplay / UI / Art / Audio → QA → build, zip, push.
+
+| Ajan | Durum | Not |
+|---|---|---|
+| Orchestrator | Devam ediyor | `DATA_SCHEMA.md` ek v2 yazıldı |
+| Game Designer | Devam ediyor | veri + GDD |
+| Tech Lead | Devam ediyor | Core arayüzleri + ARCHITECTURE |
+| Gameplay | Yapılacak | |
+| UI | Yapılacak | |
+| Art | Yapılacak | |
+| Audio | Yapılacak | |
+| QA | Yapılacak | |
+
+Kararlar (v2):
+1. Kedinin tepkisi veride açık durur (`catReacts`); "bir kez yanılma" bir veri değişmezidir ve testle korunur.
+2. İyi sonlar = `morning` ve `changed`. Not seçimi zorunlu; PlayerPrefs'te metin değil string anahtarı saklanır.
+3. Commit'lere Co-Authored-By eklenmez.
