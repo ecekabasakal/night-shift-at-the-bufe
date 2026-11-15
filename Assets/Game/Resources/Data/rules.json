@@ -34,6 +34,11 @@
       "id": "r7_keys",
       "textKey": "rule.r7_keys",
       "needsShift": false
+    },
+    {
+      "id": "r8_gevrek",
+      "textKey": "rule.r8_gevrek",
+      "needsShift": false
     }
   ]
 }

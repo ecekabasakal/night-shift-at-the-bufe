@@ -6,7 +6,7 @@
     },
     {
       "key": "ui.tagline",
-      "value": "Seven hours. Seven rules. Don't look for long."
+      "value": "Seven hours. Eight rules. Don't look for long."
     },
     {
       "key": "ui.shiftHint",
@@ -77,8 +77,32 @@
       "value": "M: sound off"
     },
     {
+      "key": "ui.handoverPrompt",
+      "value": "Leave a note for the morning shift"
+    },
+    {
+      "key": "ui.handoverDone",
+      "value": "Note taped to the till."
+    },
+    {
+      "key": "ui.previousNote",
+      "value": "Previous shift's note"
+    },
+    {
+      "key": "handover.option1",
+      "value": "The rules are real. Look when you must, never for long. And don't trust the cat after three."
+    },
+    {
+      "key": "handover.option2",
+      "value": "Quiet night. Nothing to report. The fridge is fine. Do not check the fridge."
+    },
+    {
+      "key": "handover.option3",
+      "value": "You'll see me tonight. I'll ask for a gevrek, like always. Please sell it to me."
+    },
+    {
       "key": "intro.note",
-      "value": "To whoever takes the night shift at the büfe (this kiosk): I left in a hurry. People will want tost (pressed toastie), ayran (salty yogurt drink), simit (sesame bread ring), çekirdek (sunflower seeds). They will call you abi or abla, big brother or big sister. Be polite. The bekçi (night watchman) walks this street. Some of the customers are not customers. My rules are in the notebook. They are not suggestions. - Hasan"
+      "value": "To whoever takes the night shift at the büfe (this kiosk): I left in a hurry. People will want tost (pressed toastie), ayran (salty yogurt drink), gevrek (sesame bread ring), çekirdek (sunflower seeds). They will call you abi or abla, big brother or big sister. Be polite. The bekçi (night watchman) walks this street. Some of the customers are not customers. The cat outside can tell, mostly. She gets tired late. My rules are in the notebook. They are not suggestions. - Hasan"
     },
     {
       "key": "rule.r1_shadow",
@@ -109,6 +133,10 @@
       "value": "Never hand over the keys. Not to the bekçi, not to the owner, not to me if I come back."
     },
     {
+      "key": "rule.r8_gevrek",
+      "value": "Sesame bread ring: İzmir says gevrek, the rest of Turkey says simit. Anyone asking for 'simit' here: refuse."
+    },
+    {
       "key": "item.tost",
       "value": "Tost"
     },
@@ -135,6 +163,18 @@
     {
       "key": "item.cekirdek",
       "value": "Çekirdek"
+    },
+    {
+      "key": "item.gevrek",
+      "value": "Gevrek"
+    },
+    {
+      "key": "item.boyoz",
+      "value": "Boyoz"
+    },
+    {
+      "key": "item.kumru",
+      "value": "Kumru"
     },
     {
       "key": "item.catfood",
@@ -250,7 +290,7 @@
     },
     {
       "key": "cust.c05_courier.request",
-      "value": "A bottle of water. Small is fine."
+      "value": "A kumru to go. I eat my sandwiches on the bike."
     },
     {
       "key": "cust.c05_courier.shiftHint",
@@ -258,11 +298,11 @@
     },
     {
       "key": "cust.c05_courier.correct",
-      "value": "'Out of water,' you say, next to the water. He nods slowly and leaves."
+      "value": "'Grill's off,' you say, beside the hot grill. He nods slowly and leaves."
     },
     {
       "key": "cust.c05_courier.wrong",
-      "value": "He drinks. The water doesn't go anywhere. The floor under him stays bright."
+      "value": "He bites the kumru. It doesn't get any smaller. The floor under him stays bright."
     },
     {
       "key": "cust.c06_student_again.name",
@@ -287,6 +327,30 @@
     {
       "key": "cust.c06_student_again.wrong",
       "value": "Same face, same order. He was just the student. You owe him an apology."
+    },
+    {
+      "key": "cust.c06b_riser.name",
+      "value": "Early Riser"
+    },
+    {
+      "key": "cust.c06b_riser.greeting",
+      "value": "Good morning! Lovely morning. Your cat does not like me. Cats never do."
+    },
+    {
+      "key": "cust.c06b_riser.request",
+      "value": "One simit, please. A fresh one, if the morning ones are in."
+    },
+    {
+      "key": "cust.c06b_riser.shiftHint",
+      "value": "The same smile, wider. Too many teeth in it. Six fingers on the coin."
+    },
+    {
+      "key": "cust.c06b_riser.correct",
+      "value": "'No simit here.' The smile stays exactly where it is. It leaves, still saying good morning."
+    },
+    {
+      "key": "cust.c06b_riser.wrong",
+      "value": "It eats the simit in one bite, ring and all. There was room in there for it."
     },
     {
       "key": "cust.c07_cat.name",
@@ -322,11 +386,11 @@
     },
     {
       "key": "cust.c08_auntie_again.request",
-      "value": "Matches. One box of matches. I never liked seeds."
+      "value": "A simit, dear. Just the one simit. I never liked seeds."
     },
     {
       "key": "cust.c08_auntie_again.shiftHint",
-      "value": "Her shadow points toward the lamp. Her eyes are aimed at the fridge."
+      "value": "Her shadow points toward the lamp. Where her eyes were, only skin."
     },
     {
       "key": "cust.c08_auntie_again.correct",
@@ -394,7 +458,7 @@
     },
     {
       "key": "cust.c11_tall.request",
-      "value": "Matches. One box. I will count them myself."
+      "value": "One boyoz. I am told it is the pastry one eats here at breakfast."
     },
     {
       "key": "cust.c11_tall.shiftHint",
@@ -402,7 +466,7 @@
     },
     {
       "key": "cust.c11_tall.correct",
-      "value": "It counts the matches, all forty, and leaves exactly the right money."
+      "value": "It unfolds the boyoz, counts the layers, and leaves exactly the right money."
     },
     {
       "key": "cust.c11_tall.wrong",
@@ -418,7 +482,7 @@
     },
     {
       "key": "cust.c12_fisherman.request",
-      "value": "Two... no, one simit. And don't tell my wife."
+      "value": "Two... no, one gevrek. And don't tell my wife."
     },
     {
       "key": "cust.c12_fisherman.shiftHint",
@@ -426,7 +490,7 @@
     },
     {
       "key": "cust.c12_fisherman.correct",
-      "value": "He tears the simit in half and feeds the first piece to a cat. A real one."
+      "value": "He tears the gevrek in half and feeds the first piece to a cat. A real one."
     },
     {
       "key": "cust.c12_fisherman.wrong",
