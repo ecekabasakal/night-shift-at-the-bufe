@@ -23,6 +23,7 @@ namespace NightShift
         public string shiftHintKey;
         public bool isOther;
         public bool staresBack;
+        public bool catReacts;      // v2: the street cat hisses and puffs up when this customer arrives
         public string ruleId;
         public string correctAction;
         public string specialActionKey;

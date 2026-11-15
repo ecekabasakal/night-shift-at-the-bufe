@@ -36,6 +36,7 @@ namespace NightShift
 
         // SpriteRenderer.sortingOrder values (default sorting layer).
         public const int SortBackground = 0;
+        public const int SortStreetCat = 5;   // v2: the alarmed street cat overlay (behind the customer)
         public const int SortCustomer = 10;
         public const int SortShiftTint = 30;
         public const int SortVignette = 40;

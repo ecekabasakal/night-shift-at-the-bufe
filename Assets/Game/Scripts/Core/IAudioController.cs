@@ -23,6 +23,7 @@ namespace NightShift
         // One-shot sounds.
         void PlayDoorBell();       // a customer arrives
         void PlayWhistle();        // the bekci arrives
+        void PlayCatHiss();        // v2: the street cat reacts to the customer (short, quieter than the bell)
         void PlayCashRegister();   // correct sale
         void PlayRefuse();         // correct refuse / special
         void PlayError();          // wrong decision

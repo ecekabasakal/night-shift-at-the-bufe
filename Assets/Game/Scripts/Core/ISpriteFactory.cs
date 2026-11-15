@@ -17,6 +17,13 @@ namespace NightShift
         // One or more animation frames (e.g. cat tail). shiftView = true applies customer.shiftAnomalies.
         Sprite[] CreateCustomerFrames(CustomerData customer, bool shiftView);
 
+        // v2: the street cat outside the window, alarmed (puffed up, hissing). Two or more animation frames,
+        // each a full 240 x 135 art pixel canvas, pivot in the centre, transparent everywhere except the cat,
+        // so it lines up with the background when placed at the same position. The picture must completely
+        // cover the calm cat that is painted into the background. shiftView = true gives the version
+        // that matches the Shift background.
+        Sprite[] CreateStreetCatAlarmFrames(bool shiftView);
+
         // Full-screen picture shown behind the ending screen, 240 x 135 art pixels, pivot in the centre.
         // EndingId.Changed shows the "you look a bit other too" variant.
         Sprite CreateEndingBackground(EndingId ending);

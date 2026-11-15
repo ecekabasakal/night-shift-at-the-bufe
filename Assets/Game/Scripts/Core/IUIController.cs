@@ -26,6 +26,11 @@ namespace NightShift
         // Sound on/off button in the HUD (also key M).
         event Action MuteClicked;
 
+        // v2: one of the three handover notes was picked (button click or keys 1 / 2 / 3).
+        // The value is the option index 0..2 (see HandoverNotes.OptionKey). Only raised while the
+        // note buttons put up by ShowEndingWithHandover are visible.
+        event Action<int> HandoverNoteChosen;
+
         // ---- Screens. Each Show... call hides whatever the other Show... calls put up. ----
 
         // Title screen: ui.title, ui.tagline, ui.controls, ui.shiftHint and the Start button. HUD hidden.
@@ -46,6 +51,16 @@ namespace NightShift
         // Ending screen: ending.<id>.title, ending.<id>.body and the Play again button. HUD hidden.
         void ShowEnding(EndingId ending);
 
+        // v2: ending screen for a good ending (Morning / Changed): title and body as in ShowEnding, plus the
+        // prompt ui.handoverPrompt and three note buttons showing the texts of HandoverNotes.OptionKey(0..2).
+        // The Play again button is hidden and PlayAgainClicked is NOT raised (also not by Enter / Space)
+        // until ShowHandoverDone is called.
+        void ShowEndingWithHandover(EndingId ending);
+
+        // v2: called after a note was chosen. Replaces the prompt and the three note buttons with the
+        // line ui.handoverDone and shows the Play again button. Title and body stay.
+        void ShowHandoverDone();
+
         // ---- HUD values (may be called at any time, also while the HUD is hidden) ----
 
         // Clock text, already formatted as "HH:MM".
@@ -65,6 +80,11 @@ namespace NightShift
         // ---- Notebook (handled entirely inside the UI: Tab key or the notebook button) ----
 
         bool IsNotebookOpen { get; }
+
+        // v2: the note left by the previous shift, already translated to text. The notebook shows the
+        // heading ui.previousNote and this text after the last rule; "" hides both.
+        // May be called at any time (at boot, and again after a note is chosen).
+        void SetPreviousNote(string noteText);
 
         // ---- Per frame ----
 

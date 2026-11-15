@@ -10,6 +10,10 @@ namespace NightShift
         // A long frame (tab was in the background) must not fill the Noticed meter in one step.
         private const float MaxDeltaSeconds = 0.1f;
 
+        // Where the handover note is saved. Tests assign a MemoryNoteStore here BEFORE the GameBootstrap
+        // object is created (and set it back to null afterwards); null = PlayerPrefs.
+        public static INoteStore NoteStoreOverride;
+
         private GameData data;
         private GameState state;
         private IGameSession session;
@@ -17,9 +21,13 @@ namespace NightShift
         private IKioskView kiosk;
         private IAudioController audioController;
         private IUIController ui;
+        private INoteStore noteStore;
 
         // Intro has two screens: the title (false) and the previous worker's note (true).
         private bool introNoteShowing;
+
+        // True on a good ending until the player has picked a handover note.
+        private bool handoverPending;
 
         // Last values sent out by PublishState, to announce only real changes.
         private bool lastShiftActive;
@@ -32,6 +40,7 @@ namespace NightShift
             EventBus.Clear();
 
             data = GameData.LoadFromResources();
+            noteStore = NoteStoreOverride != null ? NoteStoreOverride : new PlayerPrefsNoteStore();
 
             state = new GameState();
             state.PhaseChanged += EventBus.RaisePhaseChanged;
@@ -58,6 +67,10 @@ namespace NightShift
             ui.ActionChosen += OnActionChosen;
             ui.PlayAgainClicked += OnPlayAgainClicked;
             ui.MuteClicked += OnMuteClicked;
+            ui.HandoverNoteChosen += OnHandoverNoteChosen;
+
+            // The note saved in an earlier game (if any) goes into the notebook.
+            ui.SetPreviousNote(HandoverNotes.NoteText(data, noteStore.Load()));
 
             EnterIntro();
         }
@@ -114,6 +127,7 @@ namespace NightShift
         private void EnterIntro()
         {
             introNoteShowing = false;
+            handoverPending = false;
             session.Reset();
             state.Set(GamePhase.Intro);
             PublishState();
@@ -196,12 +210,35 @@ namespace NightShift
             PublishState();
             state.Set(GamePhase.Ending);
             EventBus.RaiseEndingReached(session.Ending);
-            ui.ShowEnding(session.Ending);
+
+            // A good ending asks for a handover note first; a bad ending is the plain ending screen.
+            handoverPending = HandoverNotes.IsGoodEnding(session.Ending);
+            if (handoverPending)
+            {
+                ui.ShowEndingWithHandover(session.Ending);
+            }
+            else
+            {
+                ui.ShowEnding(session.Ending);
+            }
+        }
+
+        // The player picked the note to leave for the next shift: save its key and show it in the notebook.
+        private void OnHandoverNoteChosen(int optionIndex)
+        {
+            if (state.Phase != GamePhase.Ending || !handoverPending) return;
+            if (optionIndex < 0 || optionIndex >= HandoverNotes.OptionCount) return;
+
+            handoverPending = false;
+            string noteKey = HandoverNotes.OptionKey(optionIndex);
+            noteStore.Save(noteKey);
+            ui.SetPreviousNote(HandoverNotes.NoteText(data, noteKey));
+            ui.ShowHandoverDone();
         }
 
         private void OnPlayAgainClicked()
         {
-            if (state.Phase != GamePhase.Ending) return;
+            if (state.Phase != GamePhase.Ending || handoverPending) return;
 
             EventBus.RaiseRestartRequested();
             EnterIntro();

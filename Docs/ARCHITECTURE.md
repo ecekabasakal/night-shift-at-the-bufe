@@ -3,6 +3,8 @@
 Everything is in `namespace NightShift`, one runtime assembly (`Assets/Game/Scripts/NightShift.asmdef`).
 The interfaces in `Scripts/Core/` are the contract: their comments are part of the spec. Read your interface file first.
 
+**Version 2 (gevrek rule, street cat, shift handover): see §8 "v2 changes" at the end — it lists every new member per owner. §1–§7 still hold.**
+
 ## 1. Systems and owners
 
 | System | Folder | Owner | What it does |
@@ -97,3 +99,56 @@ Exact behaviour is in the comments of `IGameSession.cs`. Summary: `Tick` fills/d
 
 A test can play a night without Unity objects:
 `var s = new GameSession(GameData.FromJson(c, r, st, b)); s.StartNight(); s.Tick(0.5f, true); s.Decide(PlayerAction.Sell); s.Advance(); ...`
+
+## 8. v2 changes (gevrek rule, street cat, shift handover)
+
+Additive only: nothing in §1–§7 changed its name, signature or order. New Core pieces: `CustomerData.catReacts`, `GameLayout.SortStreetCat = 5`, `HandoverNotes.cs` (`INoteStore`, `PlayerPrefsNoteStore`, `MemoryNoteStore`, `HandoverNotes`), `GameBootstrap.NoteStoreOverride`. No new EventBus event.
+
+### 8.1 Feature 1 — gevrek / simit
+Data only. No runtime code knows the item list (`requestItem` is a free string; `r8_gevrek` is decided by `correctAction` like every rule). The notebook must cope with one more rule (it already divides the space by `data.Rules.Length`) **plus** the previous-note block (8.3).
+
+### 8.2 Feature 2 — street cat
+Trigger: the existing `CustomerArrived(CustomerData c)` event with `c.catReacts == true`. Bootstrap does nothing extra.
+
+| On | KioskView must | AudioController must |
+|---|---|---|
+| `CustomerArrived(c)`, `c.catReacts` | `PlayCatAlarm()` (after `ShowCustomer(c)`) | `PlayDoorBell()` as before, then `PlayCatHiss()` so that the hiss becomes audible **about 0.35 s after the bell starts** (timer in `Tick`, or silence at the head of the clip) — it must not mask the bell. If the customer also has the whistle, the hiss comes after the whistle has started. |
+| `CustomerArrived(c)`, `!c.catReacts` | cat stays calm (cancel a running alarm) | no hiss |
+| `CustomerLeft`, `EndingReached`, `RestartRequested` | alarm ends at once (inside `HideCustomer` / `ShowEnding` / `ResetView`) | a hiss that has not started yet is cancelled |
+
+The alarm also ends by itself about 1.5 s after it started. It must be visible in **both** looks: if Shift is pressed or released during the alarm, the overlay switches between `CreateStreetCatAlarmFrames(false)` and `(true)` like the background does. The calm cat is painted into the background (`BackgroundPainter.PaintStreetCat`), so the alarm is an **overlay**: a full-canvas transparent sprite at the background's position, child of the shaken transform, `sortingOrder = GameLayout.SortStreetCat` (above background 0, below customer 10), that completely covers the calm cat.
+
+### 8.3 Feature 3 — shift handover
+Flow (Bootstrap owns it):
+1. **Boot**: `noteStore = GameBootstrap.NoteStoreOverride ?? new PlayerPrefsNoteStore()`; after the UI is created: `ui.SetPreviousNote(HandoverNotes.NoteText(data, noteStore.Load()))`.
+2. **Ending** (§5 step 7): unchanged up to `EndingReached(id)`. Then `Seen` / `Fired` → `ui.ShowEnding(id)` exactly as before. `Morning` / `Changed` → `ui.ShowEndingWithHandover(id)`; Bootstrap ignores `PlayAgainClicked` until a note is chosen.
+3. **`HandoverNoteChosen(index)`**: `noteStore.Save(HandoverNotes.OptionKey(index))` → `ui.SetPreviousNote(text)` → `ui.ShowHandoverDone()`. Play again then works as before; the next night in the same session already shows the note in the notebook.
+
+`HandoverNotes` (pure, static): `OptionCount` (3), `OptionKey(int index)` → `"handover.option1..3"`, `IsGoodEnding(EndingId)`, `IsValidKey(GameData, string)` (starts with `handover.` and `data.Has(key)`), `NoteText(GameData, string)` (text or `""`), constants `PromptKey`, `DoneKey`, `HeadingKey`. `PlayerPrefsNoteStore.PrefsKey = "nightshift.handoverNote"`.
+
+### 8.4 To-do per owner (exact signatures)
+
+**Gameplay** — nothing. `GameSession` is untouched.
+
+**UI** (`UIController : IUIController`, plus `EndingScreen` / `NotebookPanel`)
+- `public event Action<int> HandoverNoteChosen;` — index 0..2; from the three note buttons and from keys 1 / 2 / 3 (also keypad) while they are visible. Use the same one-intent-per-frame guard as the other intents.
+- `public void ShowEndingWithHandover(EndingId ending)` — as `ShowEnding` (same `EndingScreen/Title`, `EndingScreen/Body` objects and texts) plus a prompt (`ui.handoverPrompt`) and three buttons with the texts of `HandoverNotes.OptionKey(0..2)`, each prefixed with its key number. `PlayAgainButton` is hidden; Enter / Space do nothing.
+- `public void ShowHandoverDone()` — hides prompt + note buttons, shows `ui.handoverDone` and `PlayAgainButton` (Enter / Space work again, after the usual confirm delay).
+- `public void SetPreviousNote(string noteText)` — notebook: after the last rule, heading `ui.previousNote` and the text; `""` hides both. Callable at any time.
+- `ShowEnding(id)` must keep showing the plain ending (no prompt, no note buttons, Play again visible) even if a handover screen was shown in an earlier night.
+- Fixed object names (the PlayMode test finds them by path): `EndingScreen/HandoverPrompt` (Text), `EndingScreen/HandoverButton1`, `EndingScreen/HandoverButton2`, `EndingScreen/HandoverButton3` (Buttons), `EndingScreen/HandoverDone` (Text), `Notebook/Paper/PreviousNoteHeading`, `Notebook/Paper/PreviousNote` (Texts; inactive when there is no note). Existing names stay.
+- Notes are up to 110 characters: the ending panel may grow upwards on good endings, but keep some of the ending picture visible.
+
+**Art** (`SpriteFactory : ISpriteFactory`, `KioskView : IKioskView`)
+- `public Sprite[] CreateStreetCatAlarmFrames(bool shiftView)` — ≥ 2 frames, each 240 × 135 art px, pivot centre, PPU 25, transparent except the puffed-up hissing cat, which fully covers the calm cat in the background; cached like the other frames.
+- `public void PlayCatAlarm()` — starts the reaction described in 8.2; object name `StreetCatAlarm` under `Shaken`.
+- `CustomerArrived` handler: `ShowCustomer(c)`, then `PlayCatAlarm()` if `c.catReacts`. `HideCustomer`, `ShowEnding`, `ResetView` stop the alarm.
+
+**Audio** (`AudioController : IAudioController`)
+- `public void PlayCatHiss()` — a short procedural hiss (filtered noise), quieter than the bell; silent before `BeginAfterUserGesture` like every other sound.
+- `CustomerArrived` handler: timing as in 8.2; pending hiss cancelled on `CustomerLeft`, `EndingReached`, `RestartRequested`.
+
+**QA**
+- `DataConsistencyTests.Items` hard-codes the v1 item list: add `gevrek`, `boyoz`, `kumru`; add the `catReacts` invariant and the new required string keys.
+- New pure tests: `HandoverNotes` (option keys, good endings, valid / invalid / missing key → `""`) and `MemoryNoteStore`.
+- PlayMode: set `GameBootstrap.NoteStoreOverride = new MemoryNoteStore()` **before** creating the `GameBootstrap` object and back to `null` in teardown, so tests never write the developer's PlayerPrefs. `CleanNight_ReachesMorning_...` must now click `EndingScreen/HandoverButton1..3` before `PlayAgainButton` (which is inactive until then), and can check the notebook texts in the following night.

@@ -18,6 +18,11 @@ namespace NightShift
         // screen effect (tint, slight shake, vignette) on or off.
         void SetShiftView(bool active);
 
+        // v2: the street cat hisses and puffs up (CreateStreetCatAlarmFrames, sortingOrder GameLayout.SortStreetCat),
+        // in the normal AND in the Shift look. The reaction ends by itself after a moment (about 1.5 s)
+        // and is cut short by HideCustomer, ShowEnding and ResetView.
+        void PlayCatAlarm();
+
         // Hides the customer, turns the Shift look off and shows the ending picture.
         void ShowEnding(EndingId ending);
 
